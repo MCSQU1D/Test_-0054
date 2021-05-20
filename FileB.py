@@ -147,7 +147,10 @@ def InformationMenu():
     for i in Information_Menu_Holder:
         if i.split("|")[1] == Selected_Molecule:   #Uses symbol not name
             InformationMenu_List = i.split("|")
-        elif Selected_Molecule not in i:
+            break                                   #Fixed the problem where this would then go on to the elif statement <- is bad
+        if Selected_Molecule in ButtonInformationDict:
+            InformationMenu_List = ["Compound",Selected_Molecule,"N/A","N/A","Unknown","It is a random compound"]
+        else:
             InformationMenu_List = ["Select An Atom","N/A","N/A","N/A","N/A","N/A"]
     #InformationMenu_List = ["Title", "T", "0", "0", "Liquid", "debug tool"]
     if InformationMenuToggleBool == True:
@@ -170,7 +173,21 @@ def InformationMenu():
             b += 20
             PrintText(465+len(j)*5.5,(b),j,'Apple II Pro.otf',12,(255, 255, 255))  # broken and i don't know why
 
-
+def ScreenMagic():
+    screen.fill((0,0,0))  # (R, G, B)
+    pygame.mouse.set_visible(True)
+    if ButtonHover(MouseLocation()) == "WorkSpace":
+        pygame.mouse.set_visible(False)
+        work_width, work_height = MouseLocation()
+        work_height = 499 - work_height
+        work_width -= 11
+        PrintText(830, 25, "x:" + str(work_width) + " y:" + str(work_height), 'Apple II Pro.otf',12,(255, 255, 255))
+        mx, my = MouseLocation()
+        CreateCursor(mx,my,16)
+    pygame.draw.rect(screen, (0,0,0), (0,0,10,500),0)
+    pygame.draw.rect(screen, (0,0,0), (0,500,960,540),0)
+    pygame.draw.rect(screen, (0,0,0), (900,0,960,540),0)
+    pygame.draw.rect(screen, (0,0,0), (0,0,960,10),0)
 
 
 
@@ -184,7 +201,8 @@ Information_Menu_Holder = LoadInformation("chemicalinfomation.txt")
 
 running = True
 while running == True:
-    screen.fill((0,0,0))  # (R, G, B)
+    ScreenMagic()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -231,15 +249,6 @@ while running == True:
         #pass
 
 
-    pygame.mouse.set_visible(True)
-    if ButtonHover(MouseLocation()) == "WorkSpace":
-        pygame.mouse.set_visible(False)
-        work_width, work_height = MouseLocation()
-        work_height = 499 - work_height
-        work_width -= 11
-        PrintText(830, 25, "x:" + str(work_width) + " y:" + str(work_height), 'Apple II Pro.otf',12,(255, 255, 255))
-        mx, my = MouseLocation()
-        CreateCursor(mx,my,16)
 
 
 

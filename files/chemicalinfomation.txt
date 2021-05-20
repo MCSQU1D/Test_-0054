@@ -6,5 +6,5 @@ Nitrogen|N|7|14.0067|Gas|Placeholder
 Oxygen|O|8|15.9994|Gas|Placeholder
 Sodium|Na|11|22.98977|Solid|Placeholder
 Aluminium|Al|13|26.98154|Solid|Placeholder
-Iron|Fe|
-Gold|Au|
+Iron|Fe|Placeholder|Placeholder|Placeholder|Placeholder
+Gold|Au|Placeholder|Placeholder|Placeholder|Placeholder

@@ -7,7 +7,7 @@
 - [x] #04: Redesign button algorithm
 - [x] #05: Design drag algorithm
 - [ ] #06: Get NumPy
-- [ ] #07: Get Physics (pybox2d) / Make physics
+- [ ] #07: Get Physics (pybox2d) / Make physics / pygame.Rect
 - [ ] #08: Design Particle system
 - [ ] #09: Create Particles
 - [ ] #10: Write Chemical Information (Tooltips, Debug characteristics)
