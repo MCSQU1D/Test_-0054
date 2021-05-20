@@ -43,10 +43,12 @@ ButtonInformationDict = {
     "InformationPanel" : "Information Panel: Displays Information",
     "H" : "Hydrogen (H): A simple element, gas",
     "He" : "Helium (He): A simple element, gas",
-    "C" : "Carbon (C): A simple element, powder",
+    "C" : "Carbon (C): A nonmetal, powder",
     "N" : "Nitrogen (N): A simple element, gas",
     "O" : "Oxygen (O): A simple element, gas",
     "Ti" : "Titanium (Ti): A metal, powder",
+    "Na" : "Sodium (Na): A alkali metal, powder",
+    "Al" : "Aluminium (Al): A metal, powder",
     "Fe" : "Iron (Fe): A metal, powder",
     "Au" : "Gold (Au): A metal, powder",
     "H20" : "Water (H2O): A simple compound, liquid"
@@ -175,7 +177,7 @@ def InformationMenu():
 ### LOADING ###
 global Information_Menu_Holder
 Information_Menu_Holder = LoadInformation("chemicalinfomation.txt")
-print(LoadInformation("chemicalinfomation.txt"))
+#print(LoadInformation("chemicalinfomation.txt"))
 
 
 ### MAIN LOOP ###

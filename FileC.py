@@ -47,16 +47,10 @@ class atom:
         self.y_velocity = 0
         self.colour = colour
 
-
     def gravity(self):
-        self.y_velocity = self.y_velocity + (9.8 * 1/60)
-        for i in atoms:
-            if self.x_position == i.x_position:
-                if self.y_position + self.y_velocity == i.y_position:
-                    #print("Collision")
-                    pass
+        self.y_velocity = self.y_velocity + (9.8 * 1/60)   # v = u + at
         self.y_position = self.y_position + self.y_velocity
-
+        self.x_position = self.x_position + self.x_velocity
     def display_atom(self):
         pygame.draw.rect(screen, (self.colour), (self.x_position, self.y_position, 1, 1))
 
@@ -64,6 +58,37 @@ class atom:
         mx,my = pygame.mouse.get_pos()
         atom = atom(mx, my, (255,255,255), "H2O")
 
+def SimulatorMousePressedAdd(size):
+    mx,my = pygame.mouse.get_pos()
+    for i in range(-round(size/2)-1,round(size/2)+1):
+        for j in range(-round(size/2)-1,round(size/2)+1):
+            atoms.append(atom(mx+i, my+j, (255,255,255), "H2O"))
+            atoms[-1].gravity()
+
+def SimulatorMousePressedRemove(size):
+    mx,my = pygame.mouse.get_pos()
+    atomdeletelist=[]
+    for i in range(len(atoms)):
+        if atoms[i].x_position >= mx-round(cursor_size/2) and atoms[i].x_position <= mx+round(cursor_size/2) and atoms[i].y_position >= my-round(cursor_size/2) and atoms[i].y_position <= my+round(cursor_size/2):
+            atomdeletelist.append(atoms[i])
+    for i in atomdeletelist:
+        atoms.remove(i)
+
+
+def Physics():
+    for i in range(len(atoms)):
+        if atoms[i].y_position > 430:
+             atoms[i].y_position = 430
+             atoms[i].y_velocity = 0
+
+        if atoms[i].y_velocity > 0:
+            atoms[i].x_velocity = atoms[i].x_velocity + (1/4)*random.randrange(-4, 4+1)
+            atoms[i].gravity()
+            atoms[i].x_velocity = 0
+
+
+
+        atoms[i].display_atom()
 
 
 ### SEPERATE PHYSICS LOOP FROM RENDERING ###
@@ -88,14 +113,12 @@ while running == True:
             pass
 
     if pygame.mouse.get_pressed()[0] == 1:
-        mx,my = pygame.mouse.get_pos()
-        cursorx = mx-1
-        cursory = my-1
-        for i in range(-round(cursor_size/2),round(cursor_size/2)+1):
-            cursorx += 1
-            for j in range(-round(cursor_size/2),round(cursor_size/2)+1):
-                cursory += 1
-                atoms.append(atom(mx+i, my+j, (255,255,255), "H2O"))
+        SimulatorMousePressedAdd(cursor_size)
+
+    if pygame.mouse.get_pressed()[2] == 1:
+        SimulatorMousePressedRemove(cursor_size)
+
+
             #for i in range(cursor_size)
 
 
@@ -105,29 +128,10 @@ while running == True:
     CreateButton(mx-round(cursor_size/2)-1,my-round(cursor_size/2)-1,mx+round(cursor_size/2)+1,my+round(cursor_size/2)+1, "Cursor")
 
 
-    if pygame.mouse.get_pressed()[2] == 1:
-        mx,my = pygame.mouse.get_pos()
-        for i in range(len(atoms)):
-            if atoms[i].x_position >= mx-round(cursor_size/2) and atoms[i].x_position <= mx+round(cursor_size/2) and atoms[i].y_position >= my-round(cursor_size/2) and atoms[i].y_position <= my+round(cursor_size/2):
-                #print(i)
-                print(atoms[i])
-                #atoms.remove(atoms[i])
 
 
 
-
-    for i in range(len(atoms)):
-        #if i != 0 and atoms[i].y_position == atoms[i-1].y_position and atoms[i].x_position == atoms[i-1].x_position:
-            #atoms[i].y_position -= 1
-        if atoms[i].y_position < 430:
-            atoms[i].gravity()
-            atoms[i].x_position = atoms[i].x_position + int(random.uniform(-1.4, 1.4))
-
-
-        if atoms[i].y_position > 430:
-             #atoms.remove(i)
-             atoms[i].y_position = 430
-        atoms[i].display_atom()
+    Physics()
 
 
     # updates the display
@@ -136,7 +140,7 @@ while running == True:
     clock.tick(60)
     end = perf_counter()
     FPS = (round(1/(end-start),2))
-    print("FPS: " + str(FPS))
+    #print("FPS: " + str(FPS))
     start = perf_counter()
 
 #pygame.quit()

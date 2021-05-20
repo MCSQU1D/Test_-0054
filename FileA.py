@@ -23,9 +23,11 @@ screen = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
 pygame.display.set_caption("TEST: #0054")
 
-#screen.fill((255,255,255))  # (R, G, B)
-background_image = pygame.image.load('background_01.png')
-screen.blit(background_image, (0, 0))
+screen.fill((0,0,0))  # (R, G, B)
+#background_image = pygame.image.load('background_02.png')
+#screen.blit(background_image, (0, 0))
+
+
 
 
 global buttonsDict
@@ -37,6 +39,23 @@ buttonsDict = {
 
 def MouseLocation():
     return pygame.mouse.get_pos()
+
+
+def LoadInformation(file):
+    path = os.path.join("files")
+    filelist = []
+
+    for r, d, f in os.walk(path):
+        for file_finder in f:
+            if '.txt' in file_finder:
+                filelist.append(file_finder)
+    for i in filelist:
+        if i == file:
+            file_finder = i
+    file_pathname = os.getcwd()+"/files/funny.txt"  #finds the files folder
+    file_opened = open(file_pathname,"r")
+    file_split = file_opened.read().split("\n")
+    return file_split
 
 
 def PrintText(Xposition, Yposition, text, font, size, colour):
@@ -72,6 +91,10 @@ def CreateButton(x1,y1,x2,y2,name):
     #pygame.draw.rect(screen, (0,0,0), (x1+1,y1+1,x2-x1-2,y2-y1-2))
     #PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12)
 
+
+funny_comment_list = LoadInformation("funny")
+funny_comment = funny_comment_list[random.randint(0, len(funny_comment_list)-1)]
+
 # main loop
 running = True
 while running == True:
@@ -85,7 +108,6 @@ while running == True:
             #print(ButtonClick(MouseLocation()))
             if ButtonClick(MouseLocation()) == "Quit":
                 running = False
-
             if ButtonClick(MouseLocation()) == "Begin":
                 running = False
                 import FileB
@@ -97,21 +119,22 @@ while running == True:
 
 
 
-    screen.blit(background_image, (0, 0))
-    PrintText((display_width/2), (5*display_height/27), "TEST: #0054", 'ArchitectsDaughter-Regular.ttf', int(240*size_ratio), (255,255,255))
-    PrintText((display_width/2), (15*display_height/27), "BEGIN", 'ArchitectsDaughter-Regular.ttf', int(160*size_ratio), (255,255,255))
-    PrintText((display_width/2), (20*display_height/27), "QUIT", 'ArchitectsDaughter-Regular.ttf', int(160*size_ratio), (255,255,255))
-    PrintText((43*display_width/48), (26*display_height/27), "Developed by Samuel McKid", 'ArchitectsDaughter-Regular.ttf', int(24*size_ratio), (255,255,255))
+    #screen.blit(background_image, (0, 0))
+    PrintText((display_width/2), (8*display_height/30), funny_comment, 'Apple II Pro.otf', int(24*size_ratio), (255,0,0))
+    PrintText((display_width/2), (5*display_height/27), "TEST: #0054", 'Apple II ALT Pro.otf', int(140*size_ratio), (255,255,255))
+    PrintText((display_width/2), (15*display_height/27), "BEGIN", 'Apple II ALT Pro.otf', int(110*size_ratio), (255,255,255))
+    PrintText((display_width/2), (20*display_height/27), "QUIT", 'Apple II ALT Pro.otf', int(110*size_ratio), (255,255,255))
+    PrintText((5*display_width/6), (26*display_height/27), "Developed by Samuel McKid", 'Apple II Pro.otf', int(24*size_ratio), (255,0,0))
 
-    CreateButton(3*display_width/8,13*display_height/27,5*display_width/8,17*display_height/27,'Begin')
+    CreateButton(6*display_width/16,13*display_height/27,10*display_width/16,17*display_height/27,'Begin')
     CreateButton(3*display_width/8,2*display_height/3,5*display_width/8,22*display_height/27,'Quit')
 
-    Printer_1 = 0
-    for i in Ratios:
-        Ratio_Printer = (str(int(1920*i)) + "x" + str(int(1080*i)))
-        CreateButton((0),(7*display_height/27 + 2*display_height/27*Printer_1),(2*display_width/16),(9*display_height/27 + 2*display_height/27*Printer_1), Printer_1) #ADJUST BUTTTON AREAs
-        PrintText((display_width/16), (8*display_height/27 + 2*display_height/27*Printer_1), Ratio_Printer, 'ArchitectsDaughter-Regular.ttf', int(48*size_ratio), (255,255,255))
-        Printer_1 += 1
+    #Printer_1 = 0
+    #for i in Ratios:
+        #Ratio_Printer = (str(int(1920*i)) + "x" + str(int(1080*i)))
+        #CreateButton((0),(7*display_height/27 + 2*display_height/27*Printer_1),(2*display_width/16),(9*display_height/27 + 2*display_height/27*Printer_1), Printer_1) #ADJUST BUTTTON AREAs
+        #PrintText((display_width/16), (8*display_height/27 + 2*display_height/27*Printer_1), Ratio_Printer, 'Apple II Pro.otf', int(28*size_ratio), (255,255,255))
+        #Printer_1 += 1
 
     #reset button print variable
     ButtonLocationPrintHolder = 'Nil'

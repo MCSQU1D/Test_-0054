@@ -1,3 +1,10 @@
 Chemical Name|Chemical Symbol|Protons|Atomic Mass|State at room temp|Information
-Hydrogen|H|1|1.008|Gas|Flammable
-Helium|He|2|4.003|Gas|Non-Flammable
+Hydrogen|H|1|1.00784|Gas|Placeholder
+Helium|He|2|4.002602|Gas|Placeholder
+Carbon|C|6|12.0107|Solid|Placeholder
+Nitrogen|N|7|14.0067|Gas|Placeholder
+Oxygen|O|8|15.9994|Gas|Placeholder
+Sodium|Na|11|22.98977|Solid|Placeholder
+Aluminium|Al|13|26.98154|Solid|Placeholder
+Iron|Fe|
+Gold|Au|
