@@ -6,7 +6,7 @@
 - [x] #03: Design Start Screen and Sequence
 - [x] #04: Redesign button algorithm
 - [x] #05: Design drag algorithm
-- [ ] #06: Get NumPy
+- [ ] #06: Get list of all substances
 - [ ] #07: Get Physics (pybox2d) / Make physics / pygame.Rect
 - [ ] #08: Design Particle system
 - [ ] #09: Create Particles

@@ -1,5 +1,3 @@
-
-
 import pygame
 from time import sleep
 from time import perf_counter
@@ -12,6 +10,7 @@ from multiprocessing import Process
 pygame.init()
 
 atoms = []
+atomsRect = []
 
 ### SCREEN AND CLOCK ###
 display_width = 960
@@ -25,7 +24,6 @@ screen.fill((0,0,0))  # (R, G, B)
 
 start = 0
 end = 0
-
 ### FUNCTIONS ###
 def CreateButton(x1,y1,x2,y2,name):
     #global Selected_Molecule
@@ -38,6 +36,7 @@ def CreateButton(x1,y1,x2,y2,name):
     #if name not in ["InformationPanel", "WorkSpace", "Cursor"]:
     #    PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12)
 
+
 class atom:
     def __init__(self, x_position, y_position, colour, type):
         self.x_position = x_position
@@ -48,15 +47,17 @@ class atom:
         self.colour = colour
 
     def gravity(self):
-        self.y_velocity = self.y_velocity + (9.8 * 1/60)   # v = u + at
+        self.y_velocity = self.y_velocity + (9.8 * 1/60)  # v = u + at
         self.y_position = self.y_position + self.y_velocity
         self.x_position = self.x_position + self.x_velocity
-    def display_atom(self):
-        pygame.draw.rect(screen, (self.colour), (self.x_position, self.y_position, 1, 1))
 
-    def create_atom(self):
-        mx,my = pygame.mouse.get_pos()
-        atom = atom(mx, my, (255,255,255), "H2O")
+    def display_atom(self):
+        pass
+        #self.pygame.Rect(self.x_position, self.y_position, 1, 1)
+        #pygame.draw.rect(screen, (self.colour), Temporary_Holder)
+        #atomsRect.append(Temporary_Holder)
+
+
 
 def SimulatorMousePressedAdd(size):
     mx,my = pygame.mouse.get_pos()
@@ -77,17 +78,15 @@ def SimulatorMousePressedRemove(size):
 
 def Physics():
     for i in range(len(atoms)):
-        if atoms[i].y_position > 430:
-             atoms[i].y_position = 430
-             atoms[i].y_velocity = 0
 
         if atoms[i].y_velocity > 0:
             atoms[i].x_velocity = atoms[i].x_velocity + (1/4)*random.randrange(-4, 4+1)
             atoms[i].gravity()
             atoms[i].x_velocity = 0
 
-
-
+        if atoms[i].y_position > 500:               #BORDERS
+             atoms[i].y_position = 500
+             atoms[i].y_velocity = 0
         atoms[i].display_atom()
 
 
@@ -114,10 +113,11 @@ while running == True:
 
     if pygame.mouse.get_pressed()[0] == 1:
         SimulatorMousePressedAdd(cursor_size)
+        #pass
 
     if pygame.mouse.get_pressed()[2] == 1:
         SimulatorMousePressedRemove(cursor_size)
-
+        #pass
 
             #for i in range(cursor_size)
 
@@ -127,8 +127,7 @@ while running == True:
     mx,my = pygame.mouse.get_pos()
     CreateButton(mx-round(cursor_size/2)-1,my-round(cursor_size/2)-1,mx+round(cursor_size/2)+1,my+round(cursor_size/2)+1, "Cursor")
 
-
-
+    #if len(atomsRect) != 0:
 
 
     Physics()

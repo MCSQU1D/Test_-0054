@@ -1,10 +1,11 @@
 Chemical Name|Chemical Symbol|Protons|Atomic Mass|State at room temp|Information
-Hydrogen|H|1|1.00784|Gas|Placeholder
-Helium|He|2|4.002602|Gas|Placeholder
-Carbon|C|6|12.0107|Solid|Placeholder
-Nitrogen|N|7|14.0067|Gas|Placeholder
-Oxygen|O|8|15.9994|Gas|Placeholder
-Sodium|Na|11|22.98977|Solid|Placeholder
-Aluminium|Al|13|26.98154|Solid|Placeholder
-Iron|Fe|Placeholder|Placeholder|Placeholder|Placeholder
-Gold|Au|Placeholder|Placeholder|Placeholder|Placeholder
+Hydrogen|H|1|1.0078|Gas|Atomic mass of 1.0078 u, Hydrogen is the lightest, most common, and most basic element. It is flammable, and is very reactive.
+Helium|He|2|4.0026|Gas|Atomic mass of 4.0026 u, Helium is the second element in the periodic table. Helium is a noble gas, making it quite non-reactive.
+Carbon|C|6|12.011|Solid|Placeholder
+Nitrogen|N|7|14.007|Gas|Placeholder
+Oxygen|O|8|15.999|Gas|Placeholder
+Sodium|Na|11|22.990|Solid|Placeholder
+Aluminium|Al|13|26.984|Solid|Placeholder
+Iron|Fe|26|55.845|Solid|Placeholder
+Gold|Au|79|196.97|Solid|Placeholder
+Water|H20|H-O-H|18.015|Liquid|Placeholder

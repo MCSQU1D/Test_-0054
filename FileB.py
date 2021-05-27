@@ -36,11 +36,14 @@ global InformationMenuToggleBool
 InformationMenuToggleBool = False
 
 Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H20"]
+Element_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au"]
+Compound_List = ["H20"]
 
 
 ButtonInformationDict = {
     "WorkSpace" : "Workspace: area for your reactions",
     "InformationPanel" : "Information Panel: Displays Information",
+    "InformationMenu" : "Information Menu: Information on atoms",
     "H" : "Hydrogen (H): A simple element, gas",
     "He" : "Helium (He): A simple element, gas",
     "C" : "Carbon (C): A nonmetal, powder",
@@ -103,6 +106,18 @@ def LoadInformation(file):
     file_split = file_opened.read().split("\n")
     return file_split
 
+def LoadImage(file):
+    path = os.path.join("files")
+    filelist = []
+    for r, d, f in os.walk(path):
+        for file_finder in f:
+            if '.jpg' in file_finder:
+                filelist.append(file_finder)
+    for i in filelist:
+        if file in i:
+            return pygame.image.load(os.path.join('files', i))
+    return pygame.image.load(os.path.join('files', ("No_Image_Found.jpg")))
+
 def ButtonHover(Mouse_Position):
     x, y = Mouse_Position
     #print(buttonsDict)
@@ -122,7 +137,7 @@ def CreateButton(x1,y1,x2,y2,name):
     global Selected_Molecule
     buttonsDict[(x1, x2, y1, y2)] = name                                            #Sets the name for the button in the button dictionary
     pygame.draw.rect(screen, (255,255,255), (x1,y1,x2-x1,y2-y1),1)                  #Draws the button boundary
-    if name not in ["InformationPanel", "WorkSpace"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
+    if name not in ["InformationPanel", "WorkSpace", "InformationMenu"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
     if name == Selected_Molecule:                                                   #if the button is the selected one, then it inverses the colour
         pygame.draw.rect(screen, (255,255,255), (x1+1,y1+1,x2-x1-2,y2-y1-2))        #White Background
@@ -138,6 +153,7 @@ def InformationMenuToggle():
     global InformationMenuToggleBool
     if InformationMenuToggleBool == True:
         InformationMenuToggleBool = False
+        del buttonsDict[(20,220,40,490)]
     elif InformationMenuToggleBool == False:
         InformationMenuToggleBool = True
 
@@ -151,27 +167,50 @@ def InformationMenu():
         if Selected_Molecule in ButtonInformationDict:
             InformationMenu_List = ["Compound",Selected_Molecule,"N/A","N/A","Unknown","It is a random compound"]
         else:
-            InformationMenu_List = ["Select An Atom","N/A","N/A","N/A","N/A","N/A"]
+            InformationMenu_List = ["Select an Atom","N/A","N/A","N/A","N/A","On the right hand [that side ==>] you will find buttons to press to select an atom, then this menu will display that information for you."]
     #InformationMenu_List = ["Title", "T", "0", "0", "Liquid", "debug tool"]
     if InformationMenuToggleBool == True:
-        pygame.draw.rect(screen, (255,255,255), (260,30,390,450),1)    #prints the board for Information Menu, centred on 455
-        pygame.draw.rect(screen, (255,255,255), (270,40,180,180),1)     #prints 180x180 square to contain images of atomic structure and natural state
-        pygame.draw.rect(screen, (255,255,255), (460,40,180,180),1)
-        pygame.draw.line(screen, (255,255,255), (270,250),(640,250),1) #Prints horizontal line for chemical name
-        pygame.draw.line(screen, (255,255,255), (455,260),(455,340),1) #Prints vertical divider line
+        pygame.draw.rect(screen, (0,0,0), (20,40,200,450),0)
+        CreateButton(20,40,220,490,"InformationMenu")                   #prints the board for Information Menu, offset from center
+        pygame.draw.rect(screen, (255,255,255), (30,50,180,180),1)      #prints 180x180 square to contain images of atomic structure
+        pygame.draw.line(screen, (255,255,255), (30,255),(210,255),1)   #Prints horizontal line for chemical name
+        pygame.draw.line(screen, (255,255,255), (155,260),(155,340),1)  #Prints vertical divider line
 
-        PrintText(280+len("Chemical Symbol")*5.5,270,"Chemical Symbol",'Apple II Pro.otf',12,(255, 255, 255))
-        PrintText(280+len("Atomic Number")*5.5,290,"Atomic Number",'Apple II Pro.otf',12,(255, 255, 255))
-        PrintText(280+len("Atomic Mass")*5.5,310,"Atomic Mass",'Apple II Pro.otf',12,(255, 255, 255))
-        PrintText(280+len("State at 20°C")*5.5,330,"State at 20°C",'Apple II Pro.otf',12,(255, 255, 255))
-        PrintText(455,240,InformationMenu_List[0],'Apple II Pro.otf',18,(255, 255, 255))
-        PrintText(280+len(InformationMenu_List[5])*5.5,360,InformationMenu_List[5],'Apple II Pro.otf',12,(255, 255, 255)) # the long text box at the bottom, needs algo for creating border and making it go down lines
+        PrintText(30+len("Symbol")*4.5,270,"Symbol",'Apple II Pro.otf',10,(255, 255, 255))
+        PrintText(30+len("Mass")*4.5,310,"Mass",'Apple II Pro.otf',10,(255, 255, 255))
+        PrintText(30+len("State at 20°C")*4.5,330,"State at 20°C",'Apple II Pro.otf',10,(255, 255, 255))
+        PrintText(120,245,InformationMenu_List[0],'Apple II Pro.otf',14,(255, 255, 255))
+        Paragrapher(InformationMenu_List[5],95,10,30+len(InformationMenu_List[5])*4.5,350) # the long text box at the bottom, needs algo for creating border and making it go down lines
+        screen.blit(LoadImage(InformationMenu_List[0]), (30, 50))
+        
+        if InformationMenu_List[1] in Element_List:
+            PrintText(30+len("Atomic Number")*4.5,290,"Atomic Number",'Apple II Pro.otf',10,(255, 255, 255))
+        elif InformationMenu_List[1] in Compound_List:
+            PrintText(30+len("Composition")*4.5,290,"Composition",'Apple II Pro.otf',10,(255, 255, 255))
 
         list = [InformationMenu_List[1],InformationMenu_List[2],InformationMenu_List[3],InformationMenu_List[4]]
         b = 250
         for j in list:
             b += 20
-            PrintText(465+len(j)*5.5,(b),j,'Apple II Pro.otf',12,(255, 255, 255))  # broken and i don't know why
+            PrintText(160+len(j)*4.5,(b),j,'Apple II Pro.otf',10,(255, 255, 255))  # broken and i don't know why - fixed
+
+def Paragrapher(string,length,fontsize,xposition,yposition):
+    TextSplit = string.split(' ')
+    TextHolder = ""
+    TextFinal = []
+    for i in TextSplit:
+        if len(TextHolder + " " + i)*(45/fontsize) >= length:
+            TextFinal.append(TextHolder)
+            TextHolder = ""
+        if len(TextHolder + " " + i)*(45/fontsize) < length and i != TextSplit[-1]:
+            TextHolder = TextHolder + " " + i
+        else:
+            TextHolder = TextHolder + " " + i
+            TextFinal.append(TextHolder)
+            TextHolder = ""
+    for text in TextFinal:
+        PrintText(20+len(text)*4.5,yposition, text,'Apple II Pro.otf',fontsize,(255, 255, 255))
+        yposition += 12
 
 def ScreenMagic():
     screen.fill((0,0,0))  # (R, G, B)
@@ -210,7 +249,7 @@ while running == True:
         if event.type == pygame.MOUSEBUTTONDOWN:
 
             #CreateButton(450,40,550,60,'yes?')
-            if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "Nil"]:
+            if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Nil"]:
                 #print(ButtonClick(MouseLocation()))
                 Selected_Molecule = ButtonClick(MouseLocation())
 
