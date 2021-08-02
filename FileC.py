@@ -123,25 +123,12 @@ def SimulatorMousePressedRemove(size):
         atoms.remove(i)
         del i
 
-def CheckClear(atom):
-    global CheckClear_atomx
-    atoms_x_sorted = sorted(atoms, key=sortx_position)
-    CheckClear_atomx = atom.x_position
-    atoms_x_filtered = filter(CheckClearFilter, atoms_x_sorted)
-    list = []
-    print(atoms_x_filtered)
-    #for i in range(len(atoms_x_filtered)):
-        #pass
+def contains(list, filter_x, filter_y, atomnumber):
+    for x in list:
+        if filter_x(x) and filter_y(x) and x != list[atomnumber]:
+            return True
+    return False
 
-
-
-    #return False
-
-def CheckClearFilter(atom):
-    if atom.x_position == CheckClear_atomx:
-        return True
-    else:
-        return False
 
 def Stacking(atom_A, atom_B):
     atom_A.y_position -= 1
@@ -178,7 +165,7 @@ def Physics():
             atoms[i].y_position = 10
             atoms[i].y_velocity = 0
 
-        atoms[i].x_velocity = atoms[i].x_velocity + (1/16)*random.randrange(-4, 4+1)
+        atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-1, 1+1)
         atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-1, 1+1)
         atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
 
@@ -193,10 +180,13 @@ def Physics():
 
     btoms = sorted(atoms, key=sortx_position)
     for i in range(len(atoms)):                     #Should check only when there is movement, and only on the particles that move
-        #if btoms[i].y_position == btoms[i-1].y_position and btoms[i].x_position == btoms[i-1].x_position and btoms[i] != btoms[i-1]:
-        #    Stacking(btoms[i],btoms[i-1])
-        #    btoms = sorted(atoms, key=sortx_position)
-        CheckClear(btoms[i])
+        if btoms[i].y_position == btoms[i-1].y_position and btoms[i].x_position == btoms[i-1].x_position and btoms[i] != btoms[i-1]:
+            Stacking(btoms[i],btoms[i-1])
+            btoms = sorted(atoms, key=sortx_position)
+
+        if contains(atoms, lambda x: x.x_position == atoms[i].x_position, lambda x: x.y_position == atoms[i].y_position, i):
+            Stacking(atoms[i],atoms[i-1])
+            btoms = sorted(atoms, key=sortx_position)
 
 
 
@@ -241,6 +231,7 @@ while running == True:
 
 
     Physics()
+
 
     for i in range(len(atoms)):
         atoms[i].display_atom()
