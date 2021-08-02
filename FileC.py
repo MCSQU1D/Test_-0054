@@ -5,6 +5,7 @@ import random
 import os
 import math
 from multiprocessing import Process
+from operator import itemgetter, attrgetter
 
 
 pygame.init()
@@ -36,58 +37,168 @@ def CreateButton(x1,y1,x2,y2,name):
     #if name not in ["InformationPanel", "WorkSpace", "Cursor"]:
     #    PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12)
 
+Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H20"]
+Atom_Dict = {
+    "H" : {
+    "Colour" : (150,200,255),
+    "State" : "Gas",
+    },
+    "He" : {
+    "Colour" : (250,250,150),
+    "State" : "Gas",
+    },
+    "C" : {
+    "Colour" : (140,140,140),
+    "State" : "Solid",
+    },
+    "N" : {
+    "Colour" : (130,225,115),
+    "State" : "Gas",
+    },
+    "O" : {
+    "Colour" : (100, 150, 200),
+    "State" : "Gas",
+    },
+    "Na" : {
+    "Colour" : (200,200,200),
+    "State" : "Solid",
+    },
+    "Al" : {
+    "Colour" : (160,160,160),
+    "State" : "Solid",
+    },
+    "Fe" : {
+    "Colour" : (150,140,140),
+    "State" : "Solid",
+    },
+    "Au" : {
+    "Colour" : (170,170,80),
+    "State" : "Solid",
+    },
+    "H20" : {
+    "Colour" : (0,0,255),
+    "State" : "Liquid",
+    }
+}
+
+coordinates = []
 
 class atom:
-    def __init__(self, x_position, y_position, colour, type):
+    def __init__(self, x_position, y_position, type):
         self.x_position = x_position
         self.y_position = y_position
         self.type = type
         self.x_velocity = 0
         self.y_velocity = 0
-        self.colour = colour
+        self.colour = Atom_Dict[type]["Colour"]
 
-    def gravity(self):
-        self.y_velocity = self.y_velocity + (9.8 * 1/60)  # v = u + at
-        self.y_position = self.y_position + self.y_velocity
-        self.x_position = self.x_position + self.x_velocity
 
     def display_atom(self):
         pass
-        #self.pygame.Rect(self.x_position, self.y_position, 1, 1)
-        #pygame.draw.rect(screen, (self.colour), Temporary_Holder)
-        #atomsRect.append(Temporary_Holder)
+        rect = pygame.Rect(self.x_position, self.y_position, 1, 1)
+        #print(self)
+        pygame.draw.rect(screen, (self.colour), rect)
 
+#STUFF LIKE THE CLASS, BUT NOT
+def sortx_position(self):
+    return self.x_position
 
+def sorty_position(self):
+    return self.y_position
 
 def SimulatorMousePressedAdd(size):
     mx,my = pygame.mouse.get_pos()
     for i in range(-round(size/2)-1,round(size/2)+1):
         for j in range(-round(size/2)-1,round(size/2)+1):
-            atoms.append(atom(mx+i, my+j, (255,255,255), "H2O"))
-            atoms[-1].gravity()
+            atoms.append(atom(mx+i, my+j, "Na"))
+
 
 def SimulatorMousePressedRemove(size):
     mx,my = pygame.mouse.get_pos()
     atomdeletelist=[]
     for i in range(len(atoms)):
-        if atoms[i].x_position >= mx-round(cursor_size/2) and atoms[i].x_position <= mx+round(cursor_size/2) and atoms[i].y_position >= my-round(cursor_size/2) and atoms[i].y_position <= my+round(cursor_size/2):
+        if atoms[i].x_position >= mx-round(cursor_size/2)-1 and atoms[i].x_position <= mx+round(cursor_size/2)+1 and atoms[i].y_position >= my-round(cursor_size/2)-1 and atoms[i].y_position <= my+round(cursor_size/2)+1:
             atomdeletelist.append(atoms[i])
     for i in atomdeletelist:
         atoms.remove(i)
+        del i
+
+def CheckClear(atom):
+    global CheckClear_atomx
+    atoms_x_sorted = sorted(atoms, key=sortx_position)
+    CheckClear_atomx = atom.x_position
+    atoms_x_filtered = filter(CheckClearFilter, atoms_x_sorted)
+    list = []
+    print(atoms_x_filtered)
+    #for i in range(len(atoms_x_filtered)):
+        #pass
+
+
+
+    #return False
+
+def CheckClearFilter(atom):
+    if atom.x_position == CheckClear_atomx:
+        return True
+    else:
+        return False
+
+def Stacking(atom_A, atom_B):
+    atom_A.y_position -= 1
+    atom_A.y_velocity = 0
+
+
+def CheckContact(atom_1, atom_2):
+    atom_1CheckY1 = atom_1.y_position - 1
+    atom_1CheckY2 = atom_1.y_position + 1
+    atom_1CheckX1 = atom_1.x_position - 1
+    atom_1CheckX2 = atom_1.x_position + 1
+
+    if atom_2.y_position >= atom_1CheckY1 and atom_2.y_position <= atom_1CheckY2 and atom_2.x_position >= atom_1CheckX1 and atom_2.x_position <= atom_1CheckX2:
+        return True
 
 
 def Physics():
     for i in range(len(atoms)):
 
-        if atoms[i].y_velocity > 0:
-            atoms[i].x_velocity = atoms[i].x_velocity + (1/4)*random.randrange(-4, 4+1)
-            atoms[i].gravity()
+        #BORDERS 10, 10, 900, 500
+        if atoms[i].x_position > 900:
+            atoms[i].x_position = 900
             atoms[i].x_velocity = 0
 
-        if atoms[i].y_position > 500:               #BORDERS
+        if atoms[i].x_position < 10:
+            atoms[i].x_position = 10
+            atoms[i].x_velocity = 0
+
+        if atoms[i].y_position > 500:
              atoms[i].y_position = 500
              atoms[i].y_velocity = 0
-        atoms[i].display_atom()
+
+        if atoms[i].y_position < 10:
+            atoms[i].y_position = 10
+            atoms[i].y_velocity = 0
+
+        atoms[i].x_velocity = atoms[i].x_velocity + (1/16)*random.randrange(-4, 4+1)
+        atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-1, 1+1)
+        atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
+
+        atoms[i].y_position = atoms[i].y_position + atoms[i].y_velocity
+        atoms[i].x_position = atoms[i].x_position + atoms[i].x_velocity
+        atoms[i].y_position = round(atoms[i].y_position)
+        atoms[i].x_position = round(atoms[i].x_position)
+        atoms[i].x_velocity = 0
+
+        Coordinate_Holder = atoms[i].x_position, atoms[i].y_position
+        coordinates.append(Coordinate_Holder)
+
+    btoms = sorted(atoms, key=sortx_position)
+    for i in range(len(atoms)):                     #Should check only when there is movement, and only on the particles that move
+        #if btoms[i].y_position == btoms[i-1].y_position and btoms[i].x_position == btoms[i-1].x_position and btoms[i] != btoms[i-1]:
+        #    Stacking(btoms[i],btoms[i-1])
+        #    btoms = sorted(atoms, key=sortx_position)
+        CheckClear(btoms[i])
+
+
 
 
 ### SEPERATE PHYSICS LOOP FROM RENDERING ###
@@ -122,7 +233,6 @@ while running == True:
             #for i in range(cursor_size)
 
 
-        #atoms.append(atom(mx, my, (255,255,255), "H2O"))
 
     mx,my = pygame.mouse.get_pos()
     CreateButton(mx-round(cursor_size/2)-1,my-round(cursor_size/2)-1,mx+round(cursor_size/2)+1,my+round(cursor_size/2)+1, "Cursor")
@@ -132,6 +242,9 @@ while running == True:
 
     Physics()
 
+    for i in range(len(atoms)):
+        atoms[i].display_atom()
+
 
     # updates the display
     pygame.display.update()
@@ -139,7 +252,8 @@ while running == True:
     clock.tick(60)
     end = perf_counter()
     FPS = (round(1/(end-start),2))
-    #print("FPS: " + str(FPS))
+    print("FPS: " + str(FPS))
     start = perf_counter()
+    print("PARTICLES: " + str(len(atoms)))
 
 #pygame.quit()
