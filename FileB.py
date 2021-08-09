@@ -260,6 +260,29 @@ def ScreenMagic():       #Changes the mouse
 
 
 
+def Rendering_BaseScreen():
+    InformationMenu()
+    mx, my = pygame.mouse.get_pos()
+    List_Shifter = 0
+    for i in Atom_List:
+        CreateButton(910,10+25*List_Shifter,950,30+25*List_Shifter, i)
+        List_Shifter += 1
+
+    CreateButton(10,10,900,500,'WorkSpace')
+    CreateButton(10,510,900,530,'InformationPanel')
+    PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))
+    if ButtonHover(MouseLocation()) != "Nil":
+        name = ButtonInformationDict[ButtonHover(MouseLocation())]
+        x1 = 10
+        x2 = 900
+        y1 = 510
+        y2 = 530
+        PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
+    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+    if ButtonHover(MouseLocation()) in Atom_List:
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+
 ### LOADING ###
 global Information_Menu_Holder
 Information_Menu_Holder = LoadInformation("chemicalinfomation.txt")
@@ -271,66 +294,28 @@ Information_Menu_Holder = LoadInformation("chemicalinfomation.txt")
 running = True
 while running == True:
     ScreenMagic()
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
         if event.type == pygame.MOUSEBUTTONDOWN:
-
             #CreateButton(450,40,550,60,'yes?')
             if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Nil"]:
                 #print(ButtonClick(MouseLocation()))
                 Selected_Molecule = ButtonClick(MouseLocation())
-
         if event.type == pygame.KEYDOWN:
             key = pygame.key.get_pressed()
             if key[pygame.K_i]:
                 InformationMenuToggle()
 
-    InformationMenu()
-
-
-    #print(ButtonHover(MouseLocation()))
-    mx, my = pygame.mouse.get_pos()
-
-    List_Shifter = 0
-    for i in Atom_List:
-        CreateButton(910,10+25*List_Shifter,950,30+25*List_Shifter, i)
-        List_Shifter += 1
-
-    CreateButton(10,10,900,500,'WorkSpace')
-    CreateButton(10,510,900,530,'InformationPanel')
-    PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))
-
-    if ButtonHover(MouseLocation()) != "Nil":
-        name = ButtonInformationDict[ButtonHover(MouseLocation())]
-        x1 = 10
-        x2 = 900
-        y1 = 510
-        y2 = 530
-        PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
-
-
-    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-    if ButtonHover(MouseLocation()) in Atom_List:
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-        #pass
+    Rendering_BaseScreen()
 
 
 
 
-
-    #pygame.draw.line(screen, (255,255,255), (480,270), (mx,my), 1)
-
-
-    #print(MouseLocation())
 
 
     ButtonLocationPrintHolder = "Nil"
-    # updates the display
     pygame.display.update()
-    # clock.tick(framespersecond)
     clock.tick(60)
     end = perf_counter()
     FPS_List.pop(0)

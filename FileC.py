@@ -4,7 +4,7 @@ from time import perf_counter
 import random
 import os
 import math
-from multiprocessing import Process
+import threading
 from operator import itemgetter, attrgetter
 
 
@@ -117,6 +117,22 @@ def SimulatorMousePressedRemove(size):
         del i
 
 
+def Rendering_Particles():
+    screen.fill((0,0,0))  # (R, G, B)
+
+    if pygame.mouse.get_pressed()[0] == 1:
+        SimulatorMousePressedAdd(cursor_size)
+        #pass
+
+    if pygame.mouse.get_pressed()[2] == 1:
+        SimulatorMousePressedRemove(cursor_size)
+
+    mx,my = pygame.mouse.get_pos()
+    CreateButton(mx-round(cursor_size/2)-1,my-round(cursor_size/2)-1,mx+round(cursor_size/2)+1,my+round(cursor_size/2)+1, "Cursor")
+
+    for i in range(len(atoms)):
+        atoms[i].display_atom()
+
 
 
 ### PHYSICS START ###
@@ -206,11 +222,11 @@ pygame.mouse.set_visible(False)
 screen.fill((0,0,0))  # (R, G, B)
 
 
+
 a = 0
 cursor_size = 4
 running = True
 while running == True:
-    screen.fill((0,0,0))  # (R, G, B)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -218,29 +234,18 @@ while running == True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             pass
 
-    if pygame.mouse.get_pressed()[0] == 1:
-        SimulatorMousePressedAdd(cursor_size)
-        #pass
+    threads = []
+    Threading_Rendering_Particles = threading.Thread(target=Rendering_Particles)
+    threads.append(Threading_Rendering_Particles)
+    Threading_Rendering_Particles.start()
 
-    if pygame.mouse.get_pressed()[2] == 1:
-        SimulatorMousePressedRemove(cursor_size)
-        #pass
-
-            #for i in range(cursor_size)
-
-    mx,my = pygame.mouse.get_pos()
-    CreateButton(mx-round(cursor_size/2)-1,my-round(cursor_size/2)-1,mx+round(cursor_size/2)+1,my+round(cursor_size/2)+1, "Cursor")
+    Threading_Physics = threading.Thread(target=Physics)
+    threads.append(Threading_Physics)
+    Threading_Physics.start()
 
 
-    Physics()
 
-
-    for i in range(len(atoms)):
-        atoms[i].display_atom()
-
-    # updates the display
     pygame.display.update()
-    # clock.tick(framespersecond)
     clock.tick(60)
     end = perf_counter()
     FPS = (round(1/(end-start),2))

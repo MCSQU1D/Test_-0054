@@ -1,13 +1,24 @@
 import threading
 import time
 
-def worker():
-    """thread worker function"""
-    print('Worker')
+def testa():
+    print('testa')
+    time.sleep(6)
+    print("done a")
+    return
+
+def testb():
+    print('testb')
+    testthingofgs = input("Input: ")
+    print("done b")
     return
 
 threads = []
-for i in range(5):
-    t = threading.Thread(target=worker)
-    threads.append(t)
-    t.start()
+
+a = threading.Thread(target=testa)
+threads.append(a)
+a.start()
+
+b = threading.Thread(target=testb)
+threads.append(b)
+b.start()
