@@ -96,15 +96,8 @@ class atom:
     def display_atom(self):
         pass
         rect = pygame.Rect(self.x_position, self.y_position, 1, 1)
-        #print(self)
         pygame.draw.rect(screen, (self.colour), rect)
 
-#STUFF LIKE THE CLASS, BUT NOT
-def sortx_position(self):
-    return self.x_position
-
-def sorty_position(self):
-    return self.y_position
 
 def SimulatorMousePressedAdd(size):
     mx,my = pygame.mouse.get_pos()
@@ -123,26 +116,10 @@ def SimulatorMousePressedRemove(size):
         atoms.remove(i)
         del i
 
-def contains(list, filter_x, filter_y, atomnumber):
-    for x in list:
-        if filter_x(x) and filter_y(x) and x != list[atomnumber]:
-            return True
-    return False
 
 
-def Stacking(atom_A, atom_B):
-    atom_A.y_position -= 1
-    atom_A.y_velocity = 0
 
-
-def CheckContact(atom_1, atom_2):
-    atom_1CheckY1 = atom_1.y_position - 1
-    atom_1CheckY2 = atom_1.y_position + 1
-    atom_1CheckX1 = atom_1.x_position - 1
-    atom_1CheckX2 = atom_1.x_position + 1
-
-    if atom_2.y_position >= atom_1CheckY1 and atom_2.y_position <= atom_1CheckY2 and atom_2.x_position >= atom_1CheckX1 and atom_2.x_position <= atom_1CheckX2:
-        return True
+### PHYSICS START ###
 
 
 def Physics():
@@ -188,7 +165,36 @@ def Physics():
             Stacking(atoms[i],atoms[i-1])
             btoms = sorted(atoms, key=sortx_position)
 
+def contains(list, filter_x, filter_y, atomnumber):
+    for x in list:
+        if filter_x(x) and filter_y(x) and x != list[atomnumber]:
+            return True
+    return False
 
+
+def Stacking(atom_A, atom_B):
+    atom_A.y_velocity = 0
+    atom_A.y_position -= 1
+
+
+
+def CheckContact(atom_1, atom_2):
+    atom_1CheckY1 = atom_1.y_position - 1
+    atom_1CheckY2 = atom_1.y_position + 1
+    atom_1CheckX1 = atom_1.x_position - 1
+    atom_1CheckX2 = atom_1.x_position + 1
+
+    if atom_2.y_position >= atom_1CheckY1 and atom_2.y_position <= atom_1CheckY2 and atom_2.x_position >= atom_1CheckX1 and atom_2.x_position <= atom_1CheckX2:
+        return True
+
+def sortx_position(self):
+    return self.x_position
+
+def sorty_position(self):
+    return self.y_position
+
+
+### PHYSICS END ###
 
 
 ### SEPERATE PHYSICS LOOP FROM RENDERING ###
@@ -198,7 +204,7 @@ def Physics():
 
 pygame.mouse.set_visible(False)
 screen.fill((0,0,0))  # (R, G, B)
-#atom2 = molecule(160, 8, (255,255,255))
+
 
 a = 0
 cursor_size = 4
@@ -222,12 +228,8 @@ while running == True:
 
             #for i in range(cursor_size)
 
-
-
     mx,my = pygame.mouse.get_pos()
     CreateButton(mx-round(cursor_size/2)-1,my-round(cursor_size/2)-1,mx+round(cursor_size/2)+1,my+round(cursor_size/2)+1, "Cursor")
-
-    #if len(atomsRect) != 0:
 
 
     Physics()
@@ -235,7 +237,6 @@ while running == True:
 
     for i in range(len(atoms)):
         atoms[i].display_atom()
-
 
     # updates the display
     pygame.display.update()
