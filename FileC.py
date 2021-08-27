@@ -243,6 +243,7 @@ while running == True:
     threads.append(Threading_Physics)
     Threading_Physics.start()
 
+    ### CONSIDER LOCKING VARIABLES THAT ARE SHARED https://docs.python.org/3/library/threading.html#lock-objects and https://realpython.com/intro-to-python-threading/
 
 
     pygame.display.update()

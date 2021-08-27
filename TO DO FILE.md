@@ -7,10 +7,11 @@
 - [x] #04: Redesign button algorithm
 - [x] #05: Design drag algorithm
 - [ ] #06: Get list of all substances
-- [ ] #07: Get Physics (pybox2d) / Make physics / pygame.Rect
-- [ ] #08: Design Particle system
-- [ ] #09: Create Particles
-- [ ] #10: Write Chemical Information (Tooltips, Debug characteristics)
-- [ ] #11: ???
-- [ ] #12: Profit
-- [ ] #13: Polishing (Resizing, Cursor changes, Condensing Code, Keyboard Shortcuts)
+- [x] #07: Make physics
+- [ ] #08: Make Chemstry
+- [x] #09: Design Particle system
+- [x] #10: Create Particles
+- [x] #11: Write Chemical Information (Tooltips, Debug characteristics)
+- [ ] #12: ???
+- [ ] #13: Profit
+- [ ] #14: Polishing (Resizing, Cursor changes, Condensing Code, Keyboard Shortcuts)
