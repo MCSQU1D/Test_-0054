@@ -37,51 +37,23 @@ def CreateButton(x1,y1,x2,y2,name):
     #if name not in ["InformationPanel", "WorkSpace", "Cursor"]:
     #    PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12)
 
-Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H20"]
-Atom_Dict = {
-    "H" : {
-    "Colour" : (150,200,255),
-    "State" : "Gas",
-    },
-    "He" : {
-    "Colour" : (250,250,150),
-    "State" : "Gas",
-    },
-    "C" : {
-    "Colour" : (140,140,140),
-    "State" : "Solid",
-    },
-    "N" : {
-    "Colour" : (130,225,115),
-    "State" : "Gas",
-    },
-    "O" : {
-    "Colour" : (100, 150, 200),
-    "State" : "Gas",
-    },
-    "Na" : {
-    "Colour" : (200,200,200),
-    "State" : "Solid",
-    },
-    "Al" : {
-    "Colour" : (160,160,160),
-    "State" : "Solid",
-    },
-    "Fe" : {
-    "Colour" : (150,140,140),
-    "State" : "Solid",
-    },
-    "Au" : {
-    "Colour" : (170,170,80),
-    "State" : "Solid",
-    },
-    "H20" : {
-    "Colour" : (0,0,255),
-    "State" : "Liquid",
-    }
-}
+def LoadInformation(file):
+    path = os.path.join("files")
+    filelist = []
 
-coordinates = []
+    for r, d, f in os.walk(path):
+        for file_finder in f:
+            if '.txt' in file_finder:
+                filelist.append(file_finder)
+    for i in filelist:
+        if i == file:
+            file_finder = i
+    #if file_finder == "chemicalinfomation.txt":
+    file_pathname = os.getcwd()+"/files/" +file  #finds the files folder
+    file_opened = open(file_pathname,"r")
+    file_split = file_opened.read().split("\n")
+    return file_split
+
 
 class atom:
     def __init__(self, x_position, y_position, type):
@@ -91,6 +63,9 @@ class atom:
         self.x_velocity = 0
         self.y_velocity = 0
         self.colour = Atom_Dict[type]["Colour"]
+        self.temperature = 20
+        self.state = "solid"
+
 
 
     def display_atom(self):
@@ -103,7 +78,8 @@ def SimulatorMousePressedAdd(size):
     mx,my = pygame.mouse.get_pos()
     for i in range(-round(size/2)-1,round(size/2)+1):
         for j in range(-round(size/2)-1,round(size/2)+1):
-            atoms.append(atom(mx+i, my+j, "Na"))
+            if mx+i < 900 and mx+i > 10 and my+j > 10 and my+j < 500:
+                atoms.append(atom(mx+i, my+j, Selected_Molecule))
 
 
 def SimulatorMousePressedRemove(size):
@@ -141,6 +117,18 @@ def Rendering_Particles():
 def Physics():
     for i in range(len(atoms)):
 
+        if atoms[i].temperature < -273:
+            atoms[i].temperature = -273
+
+        if atoms[i].temperature > Atom_Dict[atoms[i].type]["Melting_temp"]:   #is melting
+            atoms[i].state = "liquid"
+        if atoms[i].temperature <= Atom_Dict[atoms[i].type]["Boiling_temp"]:   #is condensing
+            atoms[i].state = "liquid"
+        if atoms[i].temperature > Atom_Dict[atoms[i].type]["Boiling_temp"]:   #is boiling
+            atoms[i].state = "gas"
+        if atoms[i].temperature <= Atom_Dict[atoms[i].type]["Melting_temp"]:   #is freezing
+            atoms[i].state = "solid"
+
         #BORDERS 10, 10, 900, 500
         if atoms[i].x_position > 900:
             atoms[i].x_position = 900
@@ -158,9 +146,17 @@ def Physics():
             atoms[i].y_position = 10
             atoms[i].y_velocity = 0
 
-        atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-1, 1+1)
-        atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-1, 1+1)
-        atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
+        if atoms[i].state == "gas":
+            atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-4, 4+1)
+            atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-2, 2+1)
+
+        if atoms[i].state == "liquid":
+            atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
+            atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-1, 1+1)
+            atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-1, 1+1)
+
+        if atoms[i].state == "solid":
+            atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
 
         atoms[i].y_position = atoms[i].y_position + atoms[i].y_velocity
         atoms[i].x_position = atoms[i].x_position + atoms[i].x_velocity
@@ -215,6 +211,24 @@ def sorty_position(self):
 
 ### SEPERATE PHYSICS LOOP FROM RENDERING ###
 
+Selected_Molecule = "H2O"
+
+Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO"]
+Chemical_Information = LoadInformation("chemicalinfomation.txt")
+
+Atom_Dict = {}
+Chemical_Information_Other = LoadInformation("chemicalinfomation.txt")
+Chemical_Information_Other.pop(0)
+for i in Chemical_Information_Other:
+    j = i.split("|")
+    j_dict = {}
+    j_dict["Melting_temp"] = float(j[5])
+    j_dict["Boiling_temp"] = float(j[6])
+    j_dict["Colour"] = int(j[8]),int(j[9]),int(j[10])
+    Atom_Dict[j[1]] = j_dict
+
+
+coordinates = []
 
 ### MAIN LOOP ###
 

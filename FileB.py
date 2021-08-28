@@ -26,18 +26,20 @@ Selected_Molecule = "Nil"
 ButtonLocationPrintHolder = "Nil"
 
 global buttonsDict
+global Temperature
 buttonsDict = {}
 start = 0
 end = 0
 FPS = 300
+Temperature = 20
 FPS_List = [300,300,300,300,300]
 cursor_size = 3
 global InformationMenuToggleBool
 InformationMenuToggleBool = False
 
-Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H20"]
+Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO", "AlO"]
 Element_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au"]
-Compound_List = ["H20"]
+Compound_List = ["H2O", "FeO", "AlO"]
 
 
 ButtonInformationDict = {
@@ -54,21 +56,13 @@ ButtonInformationDict = {
     "Al" : "Aluminium (Al): A metal, powder",
     "Fe" : "Iron (Fe): A metal, powder",
     "Au" : "Gold (Au): A metal, powder",
-    "H20" : "Water (H2O): A simple compound, liquid"
+    "H2O" : "Water (H2O): A simple compound, liquid",
+    "FeO" : "Iron Oxide (FeO): A simple compound, powder",
+    "AlO" : "Alumina (AlO): A simple compound, powder"
 }
 
-Atom_Dict = {
-    "H" : (150,200,255),
-    "He" : (250,250,150),
-    "C" : (140,140,140),
-    "N" : (130,225,115),
-    "O" : (100, 150, 200),
-    "Na" : (200,200,200),
-    "Al" : (160,160,160),
-    "Fe" : (150,140,140),
-    "Au" : (170,170,80),
-    "H20" : (0,0,255)
-}
+
+
 
 ### FUNCTIONS ###
 
@@ -112,9 +106,8 @@ def LoadInformation(file):
     for i in filelist:
         if i == file:
             file_finder = i
-    if file_finder == "chemicalinfomation.txt":
-        file_pathname = os.getcwd()+"/files/chemicalinfomation.txt"  #finds the files folder
-        file_opened = open(file_pathname,"r")
+    file_pathname = os.getcwd()+"/files/" +file  #finds the files folder
+    file_opened = open(file_pathname,"r")
     file_split = file_opened.read().split("\n")
     return file_split
 
@@ -152,7 +145,7 @@ def CreateButton(x1,y1,x2,y2,name):
     if name not in ["InformationPanel", "WorkSpace", "InformationMenu"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
     if name == Selected_Molecule:                                                   #if the button is the selected one, then it inverses the colour
-        pygame.draw.rect(screen, Atom_Dict[Selected_Molecule], (x1+1,y1+1,x2-x1-2,y2-y1-2))        #White Background
+        pygame.draw.rect(screen, Atom_Dict[Selected_Molecule]["Colour"], (x1+1,y1+1,x2-x1-2,y2-y1-2))        #White Background
         pygame.draw.rect(screen, (0,0,0), (x1,y1,x2-x1,y2-y1),1)                    #Black border
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(0, 0, 0))
 
@@ -188,9 +181,9 @@ def InformationMenu():
         if InformationMenu_List[1] in Element_List:
             pygame.draw.rect(screen, (255,255,255), (30,50,180,180),1)      #prints 180x180 square to contain images of atomic structure
             pygame.draw.line(screen, (255,255,255), (30,255),(210,255),1)   #Prints horizontal line for chemical name
-            pygame.draw.line(screen, (255,255,255), (155,260),(155,340),1)  #Prints vertical divider line
-            list = [InformationMenu_List[1],InformationMenu_List[2],InformationMenu_List[3],InformationMenu_List[4]]
-            Paragrapher(InformationMenu_List[5],95,10,30+len(InformationMenu_List[5])*4.5,350) # the long text box at the bottom, needs algo for creating border and making it go down lines
+            pygame.draw.line(screen, (255,255,255), (155,260),(155,380),1)  #Prints vertical divider line
+            list = [InformationMenu_List[1],InformationMenu_List[2],InformationMenu_List[3],InformationMenu_List[4],InformationMenu_List[5]+"°C",InformationMenu_List[6]+"°C"]
+            Paragrapher(InformationMenu_List[7],95,10,30+len(InformationMenu_List[5])*4.5,390) # the long text box at the bottom, needs algo for creating border and making it go down lines
             screen.blit(LoadImage(InformationMenu_List[0]), (30, 50))
 
             PrintText(120,245,InformationMenu_List[0],'Apple II Pro.otf',14,(255, 255, 255))
@@ -198,14 +191,16 @@ def InformationMenu():
             PrintText(30+len("Atomic Number")*4.5,290,"Atomic Number",'Apple II Pro.otf',10,(255, 255, 255))
             PrintText(30+len("Mass (u)")*4.5,310,"Mass (u)",'Apple II Pro.otf',10,(255, 255, 255))
             PrintText(30+len("State at 20°C")*4.5,330,"State at 20°C",'Apple II Pro.otf',10,(255, 255, 255))
+            PrintText(30+len("Melting Temp")*4.5,350,"Melting Temp",'Apple II Pro.otf',10,(255, 255, 255))
+            PrintText(30+len("Boiling Temp")*4.5,370,"Boiling Temp",'Apple II Pro.otf',10,(255, 255, 255))
 
 
         elif InformationMenu_List[1] in Compound_List:
             pygame.draw.rect(screen, (255,255,255), (30,50,180,180),1)      #prints 180x180 square to contain images of atomic structure
             pygame.draw.line(screen, (255,255,255), (30,255),(210,255),1)   #Prints horizontal line for chemical name
-            pygame.draw.line(screen, (255,255,255), (155,260),(155,340),1)  #Prints vertical divider line
-            list = [InformationMenu_List[1],InformationMenu_List[2],InformationMenu_List[3],InformationMenu_List[4]]
-            Paragrapher(InformationMenu_List[5],95,10,30+len(InformationMenu_List[5])*4.5,350) # the long text box at the bottom, needs algo for creating border and making it go down lines
+            pygame.draw.line(screen, (255,255,255), (155,260),(155,380),1)  #Prints vertical divider line
+            list = [InformationMenu_List[1],InformationMenu_List[2],InformationMenu_List[3],InformationMenu_List[4],InformationMenu_List[5]+"°C",InformationMenu_List[6]+"°C"]
+            Paragrapher(InformationMenu_List[7],95,10,30+len(InformationMenu_List[5])*4.5,390) # the long text box at the bottom, needs algo for creating border and making it go down lines
             screen.blit(LoadImage(InformationMenu_List[0]), (30, 50))
 
             PrintText(120,245,InformationMenu_List[0],'Apple II Pro.otf',14,(255, 255, 255))
@@ -213,9 +208,11 @@ def InformationMenu():
             PrintText(30+len("Mass (g/mol)")*4.5,310,"Mass (g/mol)",'Apple II Pro.otf',10,(255, 255, 255))
             PrintText(30+len("Composition")*4.5,290,"Composition",'Apple II Pro.otf',10,(255, 255, 255))
             PrintText(30+len("State at 20°C")*4.5,330,"State at 20°C",'Apple II Pro.otf',10,(255, 255, 255))
+            PrintText(30+len("Melting Temp")*4.5,350,"Melting Temp",'Apple II Pro.otf',10,(255, 255, 255))
+            PrintText(30+len("Boiling Temp")*4.5,370,"Boiling Temp",'Apple II Pro.otf',10,(255, 255, 255))
 
         else:
-            list = ["","","",""]
+            list = ["","","","","",""]
             text = "On the right hand       that side ==>    you will find buttons to press to select an atom, then this menu will display that information for you."
             Paragrapher(text,95,10,30+len(InformationMenu_List[5])*4.5,60) # the long text box at the bottom, needs algo for creating border and making it go down lines
 
@@ -271,6 +268,7 @@ def Rendering_BaseScreen():
     CreateButton(10,10,900,500,'WorkSpace')
     CreateButton(10,510,900,530,'InformationPanel')
     PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))
+    PrintText(455, 25, "Temp: " + str(Temperature), 'Apple II Pro.otf',12,(255, 255, 255))
     if ButtonHover(MouseLocation()) != "Nil":
         name = ButtonInformationDict[ButtonHover(MouseLocation())]
         x1 = 10
@@ -282,11 +280,33 @@ def Rendering_BaseScreen():
     if ButtonHover(MouseLocation()) in Atom_List:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
+def Screen_Temperature():
+    global Temperature
+    if pygame.key.get_pressed()[pygame.K_UP] == True:
+        Temperature += 1
+    if pygame.key.get_pressed()[pygame.K_DOWN] == True:
+        Temperature -= 1
+    if Temperature < -273:
+        Temperature = -273
+
+
 
 ### LOADING ###
 global Information_Menu_Holder
 Information_Menu_Holder = LoadInformation("chemicalinfomation.txt")
-#print(LoadInformation("chemicalinfomation.txt"))
+
+
+Chemical_Information_Other = LoadInformation("chemicalinfomation.txt")
+Chemical_Information_Other.pop(0)
+Atom_Dict = {}
+for i in Chemical_Information_Other:
+    j = i.split("|")
+    j_dict = {}
+    j_dict["Melting_temp"] = float(j[5])
+    j_dict["Boiling_temp"] = float(j[6])
+    j_dict["Colour"] = int(j[8]),int(j[9]),int(j[10])
+
+    Atom_Dict[j[1]] = j_dict
 
 
 ### MAIN LOOP ###
@@ -307,13 +327,14 @@ while running == True:
             if key[pygame.K_i]:
                 InformationMenuToggle()
 
+
     Rendering_BaseScreen()
 
 
 
 
 
-
+    Screen_Temperature()
     ButtonLocationPrintHolder = "Nil"
     pygame.display.update()
     clock.tick(60)

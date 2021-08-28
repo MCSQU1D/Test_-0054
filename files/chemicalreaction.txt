@@ -1,2 +1,5 @@
-Reactant_1|Reactant_2|Result
-H|O|H20
+Reactant_1|Reactant_1 Quantity|Reactant_2|Reactant_2 Quantity|Result|Result Quantity|Temp required|Temp result
+H|2|O|1|H20|1|500|500
+Fe|1|O|1|FeO|1|0|0
+O|3|Al|2|AlO|1|0|0
+FeO|2|Al|1|2xFe+AlO|1|900|4000
