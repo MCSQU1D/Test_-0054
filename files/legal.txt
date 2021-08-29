@@ -1,2 +1,1 @@
-Do not attempt to recreate any experiments possible in this simulator
-This simulator is not a reliable source of information
+Do NOT attempt to recreate any experiments possible in this simulator. Any attempt to recreate experiments may result in damage to property and serious injury or death. Sam McKid is NOT liable for any damage to property or individuals as a result of attempted recreation. This simulator is not a reliable source of information.

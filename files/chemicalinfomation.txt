@@ -1,13 +1,13 @@
 Chemical Name|Chemical Symbol|Protons|Atomic Mass|State at room temp|Melting Temp|Boiling Temp|Information|R|G|B
 Hydrogen|H|1|1.0078|Gas|-259|-253|Atomic mass of 1.0078 u, Hydrogen is the lightest, most common, and most basic element. It is flammable, and is very reactive.|150|200|255
 Helium|He|2|4.0026|Gas|-272|-269|Atomic mass of 4.0026 u, Helium is the second element in the periodic table. Helium is a noble gas, making it quite non-reactive.|250|250|150
-Carbon|C|6|12.011|Solid|3550|4827|Placeholder|100|100|100
-Nitrogen|N|7|14.007|Gas|-210|-196|Placeholder|130|225|115
-Oxygen|O|8|15.999|Gas|-183|-219|Placeholder|100|150|200
-Sodium|Na|11|22.990|Solid|97.8|883|Placeholder|220|220|200
-Aluminium|Al|13|26.984|Solid|660|2470|Placeholder|170|170|170
-Iron|Fe|26|55.845|Solid|1538|2862|Placeholder|150|130|130
-Gold|Au|79|196.97|Solid|1064|2700|Placeholder|220|190|80
-Water|H2O|H-O-H|18.015|Liquid|0.00|100|Placeholder|0|0|255
-Iron Oxide|FeO|Fe-O|71.844|Solid|1377|3414|Placeholder|125|50|15
-Aluminium Oxide|AlO|Al=O|101.96|Solid|2072|2977|Placeholder|210|210|210
+Carbon|C|6|12.011|Solid|3550|4827|Atomic mass of 12.011 u, Carbon is a non-metal found commonly around the world, forming many organic and inorganic compounds.|100|100|100
+Nitrogen|N|7|14.007|Gas|-210|-196|Atomic mass of 14.007 u, Nitrogen is the most abundant element in the atmosphere (air is 78% Nitrogen).|130|225|115
+Oxygen|O|8|15.999|Gas|-183|-219|Atomic mass of 15.999 u, Oxygen is an essential non-metal for higher level organisms.|100|150|200
+Sodium|Na|11|22.990|Solid|97.8|883|Atomic mass of 22.990 u, Sodium is a highly reactive alkali metal, commonly found in the compound sodium chloride; table salt.|220|220|200
+Aluminium|Al|13|26.984|Solid|660|2470|Atomic mass of 26.984 u, Aluminium is the most common metal on earths crust, used in manufacturing.|170|170|170
+Iron|Fe|26|55.845|Solid|1538|2862|Atomic mass of 55.845 u, Iron is a common transition metal composing 80% of earths core. Used in construction in mixtures with carbon.|150|130|130
+Gold|Au|79|196.97|Solid|1064|2700|Atomic mass of 196.97 u, Gold is a rare transition metal, and the 4th densest non- radioactive element. Used in electronics and jewellery.|220|190|80
+Water|H2O|H-O-H|18.015|Liquid|0.00|100|Molar mass of 18.015 g/mol, Water (oxidane in liquid state) is one of the few liquids denser than its solid form. Covers 71% of earth surface.|0|0|255
+Iron Oxide|FeO|Fe=O|71.844|Solid|1377|3414|Molar mass of 71.844 g/mol, Iron Oxide (also call rust) is the common reddish compound found on Iron mixtures|175|40|15
+Aluminium Oxide|AlO|N/A|101.96|Solid|2072|2977|Molar mass of 101.96 g/mol, formula of Al2O3, O=Al-O-Al=O, (simplified in simulator). Forms a protective cover over exposed aluminium|210|210|210

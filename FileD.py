@@ -28,5 +28,20 @@ def LoadInformation(file):
 
 
 
-Reaction_Information = LoadInformation(chemicalreaction)
-print(Reaction_Information)
+Reaction_Dict = {}
+Reaction_Information = LoadInformation("chemicalreaction.txt")
+Reaction_Information.pop(0)
+for i in Reaction_Information:
+    j = i.split("|")
+    j_dict = {}
+    j_dict["Reactant_1"] = j[0]
+    j_dict["Reactant_1_Quantity"] = int(j[1])
+    j_dict["Reactant_2"] = j[2]
+    j_dict["Reactant_2_Quantity"] = int(j[3])
+    j_dict["Resultant"] = j[4]
+    j_dict["Resultant_Quantity"] = int(j[5])
+    j_dict["Temp_Required"] = float(j[6])
+    j_dict["Temp_Added"] = float(j[7])
+    Reaction_Dict[j[4]] = j_dict
+
+print(Reaction_Dict)
