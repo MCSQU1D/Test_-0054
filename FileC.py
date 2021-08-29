@@ -21,21 +21,14 @@ clock = pygame.time.Clock()
 screen.fill((0,0,0))  # (R, G, B)
 
 
-### VARIABLE DECLARATION ###
 
+### VARIABLE DECLARATION ###
+Temperature = 20
 start = 0
 end = 0
 ### FUNCTIONS ###
-def CreateButton(x1,y1,x2,y2,name):
-    #global Selected_Molecule
-    #buttonsDict[(x1, x2, y1, y2)] = name
-    pygame.draw.rect(screen, (255,255,255), (x1,y1,x2-x1,y2-y1))
-    pygame.draw.rect(screen, (0,0,0), (x1+1,y1+1,x2-x1-2,y2-y1-2))
-    #if name == Selected_Molecule:
-    #    pygame.draw.rect(screen, (0,0,0), (x1,y1,x2-x1,y2-y1))
-    #    pygame.draw.rect(screen, (255,255,255), (x1+1,y1+1,x2-x1-2,y2-y1-2))
-    #if name not in ["InformationPanel", "WorkSpace", "Cursor"]:
-    #    PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12)
+def CreateCursor(x,y,size):
+    pygame.draw.rect(screen, (255,255,255), (x-size/2,y-size/2,size,size),1)    #prints the square cursor
 
 def LoadInformation(file):
     path = os.path.join("files")
@@ -54,6 +47,11 @@ def LoadInformation(file):
     file_split = file_opened.read().split("\n")
     return file_split
 
+
+
+
+
+### PARTICLES START ###
 
 class atom:
     def __init__(self, x_position, y_position, type):
@@ -104,14 +102,38 @@ def Rendering_Particles():
         SimulatorMousePressedRemove(cursor_size)
 
     mx,my = pygame.mouse.get_pos()
-    CreateButton(mx-round(cursor_size/2)-1,my-round(cursor_size/2)-1,mx+round(cursor_size/2)+1,my+round(cursor_size/2)+1, "Cursor")
+    CreateCursor(mx,my, cursor_size)
 
     for i in range(len(atoms)):
         atoms[i].display_atom()
 
 
+### PHYSICS END ###
+
+
+
+
 
 ### PHYSICS START ###
+def contains(list, filter_x, filter_y, atomnumber):
+    for x in list:
+        if filter_x(x) and filter_y(x) and x != list[atomnumber]:
+            return True
+    return False
+
+
+def Stacking(atom_A, atom_B):
+    atom_A.y_velocity = 0
+    atom_A.y_position -= 1
+
+def sortx_position(self):
+    return self.x_position
+
+def sorty_position(self):
+    return self.y_position
+
+
+
 
 
 def Physics():
@@ -119,6 +141,11 @@ def Physics():
 
         if atoms[i].temperature < -273:
             atoms[i].temperature = -273
+
+        if atoms[i].temperature < Temperature:
+            atoms[i].temperature += 1
+        if atoms[i].temperature > Temperature:
+            atoms[i].temperature += 1
 
         if atoms[i].temperature > Atom_Dict[atoms[i].type]["Melting_temp"]:   #is melting
             atoms[i].state = "liquid"
@@ -177,18 +204,16 @@ def Physics():
             Stacking(atoms[i],atoms[i-1])
             btoms = sorted(atoms, key=sortx_position)
 
-def contains(list, filter_x, filter_y, atomnumber):
-    for x in list:
-        if filter_x(x) and filter_y(x) and x != list[atomnumber]:
-            return True
-    return False
 
 
-def Stacking(atom_A, atom_B):
-    atom_A.y_velocity = 0
-    atom_A.y_position -= 1
+### PHYSICS END ###
 
 
+
+
+
+
+### CHEMISTRY START ###
 
 def CheckContact(atom_1, atom_2):
     atom_1CheckY1 = atom_1.y_position - 1
@@ -199,19 +224,26 @@ def CheckContact(atom_1, atom_2):
     if atom_2.y_position >= atom_1CheckY1 and atom_2.y_position <= atom_1CheckY2 and atom_2.x_position >= atom_1CheckX1 and atom_2.x_position <= atom_1CheckX2:
         return True
 
-def sortx_position(self):
-    return self.x_position
-
-def sorty_position(self):
-    return self.y_position
 
 
-### PHYSICS END ###
+
+def Chemistry():
+    #for i in range(len(atoms)):
+        #atoms[i].type
+    pass
+
+
+
+### CHEMISTRY END ###
+
 
 
 ### SEPERATE PHYSICS LOOP FROM RENDERING ###
 
-Selected_Molecule = "H2O"
+
+### LOADING ###
+
+Selected_Molecule = input("THing: ")
 
 Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO"]
 Chemical_Information = LoadInformation("chemicalinfomation.txt")
@@ -247,6 +279,12 @@ while running == True:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             pass
+
+        if event.type == pygame.KEYDOWN:
+            key = pygame.key.get_pressed()
+            if key[pygame.K_c]:
+                Selected_Molecule = input("THing: ")
+
 
     threads = []
     Threading_Rendering_Particles = threading.Thread(target=Rendering_Particles)

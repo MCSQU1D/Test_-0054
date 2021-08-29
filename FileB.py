@@ -46,6 +46,8 @@ ButtonInformationDict = {
     "WorkSpace" : "Workspace: area for your reactions",
     "InformationPanel" : "Information Panel: Displays Information",
     "InformationMenu" : "Information Menu: Information on atoms",
+    "Temp_Up" : "Increase temperature of WorkSpace, can use up arrow",
+    "Temp_Down" : "Decrease temperature of WorkSpace, can use down arrow",
     "H" : "Hydrogen (H): A simple element, gas",
     "He" : "Helium (He): A simple element, gas",
     "C" : "Carbon (C): A nonmetal, powder",
@@ -68,6 +70,27 @@ ButtonInformationDict = {
 
 def MouseLocation():
     return pygame.mouse.get_pos()
+
+def LoadInformation(file):
+    path = os.path.join("files")
+    filelist = []
+
+    for r, d, f in os.walk(path):
+        for file_finder in f:
+            if '.txt' in file_finder:
+                filelist.append(file_finder)
+    for i in filelist:
+        if i == file:
+            file_finder = i
+    file_pathname = os.getcwd()+"/files/" +file  #finds the files folder
+    file_opened = open(file_pathname,"r")
+    file_split = file_opened.read().split("\n")
+    return file_split
+
+def CreateCursor(x,y,size):
+    pygame.draw.rect(screen, (255,255,255), (x-size/2,y-size/2,size,size),1)    #prints the square cursor
+
+
 
 
 def PrintText(Xposition, Yposition, text, font, size, colour):
@@ -95,21 +118,6 @@ def ButtonClick(Mouse_Position):
             ButtonLocationPrintHolder = buttonsDict[ButtonLocations]
     return ButtonLocationPrintHolder
 
-def LoadInformation(file):
-    path = os.path.join("files")
-    filelist = []
-
-    for r, d, f in os.walk(path):
-        for file_finder in f:
-            if '.txt' in file_finder:
-                filelist.append(file_finder)
-    for i in filelist:
-        if i == file:
-            file_finder = i
-    file_pathname = os.getcwd()+"/files/" +file  #finds the files folder
-    file_opened = open(file_pathname,"r")
-    file_split = file_opened.read().split("\n")
-    return file_split
 
 def LoadImage(file):
     path = os.path.join("files")
@@ -142,17 +150,18 @@ def CreateButton(x1,y1,x2,y2,name):
     global Selected_Molecule
     buttonsDict[(x1, x2, y1, y2)] = name                                            #Sets the name for the button in the button dictionary
     pygame.draw.rect(screen, (255,255,255), (x1,y1,x2-x1,y2-y1),1)                  #Draws the button boundary
-    if name not in ["InformationPanel", "WorkSpace", "InformationMenu"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
+    if name not in ["InformationPanel", "WorkSpace", "InformationMenu", "Temp_Up", "Temp_Down"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
+    if name == "Temp_Up":
+        PrintText((x1+x2)/2,(y1+y2)/2,"↑",'Apple II Pro.otf',12,(255, 255, 255))
+    if name == "Temp_Down":
+        PrintText((x1+x2)/2,(y1+y2)/2,"↓",'Apple II Pro.otf',12,(255, 255, 255))
     if name == Selected_Molecule:                                                   #if the button is the selected one, then it inverses the colour
         pygame.draw.rect(screen, Atom_Dict[Selected_Molecule]["Colour"], (x1+1,y1+1,x2-x1-2,y2-y1-2))        #White Background
         pygame.draw.rect(screen, (0,0,0), (x1,y1,x2-x1,y2-y1),1)                    #Black border
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(0, 0, 0))
 
 
-
-def CreateCursor(x,y,size):
-    pygame.draw.rect(screen, (255,255,255), (x-size/2,y-size/2,size,size),1)    #prints the square cursor
 
 def InformationMenuToggle():
     global InformationMenuToggleBool
@@ -268,7 +277,7 @@ def Rendering_BaseScreen():
     CreateButton(10,10,900,500,'WorkSpace')
     CreateButton(10,510,900,530,'InformationPanel')
     PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))
-    PrintText(455, 25, "Temp: " + str(Temperature), 'Apple II Pro.otf',12,(255, 255, 255))
+    PrintText(455, 25, "Temp: " + str(Temperature) + "°C (" + str(int(Temperature*9/5+32)) + "°F)", 'Apple II Pro.otf',12,(255, 255, 255))
     if ButtonHover(MouseLocation()) != "Nil":
         name = ButtonInformationDict[ButtonHover(MouseLocation())]
         x1 = 10
@@ -280,7 +289,15 @@ def Rendering_BaseScreen():
     if ButtonHover(MouseLocation()) in Atom_List:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
-def Screen_Temperature():
+
+### BASE SCREEN END
+
+
+
+
+def Screen_Controls():
+    CreateButton(910,480,950,500,'Temp_Up')
+    CreateButton(910,510,950,530,'Temp_Down')
     global Temperature
     if pygame.key.get_pressed()[pygame.K_UP] == True:
         Temperature += 1
@@ -288,6 +305,8 @@ def Screen_Temperature():
         Temperature -= 1
     if Temperature < -273:
         Temperature = -273
+
+
 
 
 
@@ -309,6 +328,8 @@ for i in Chemical_Information_Other:
     Atom_Dict[j[1]] = j_dict
 
 
+
+
 ### MAIN LOOP ###
 
 running = True
@@ -319,9 +340,13 @@ while running == True:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             #CreateButton(450,40,550,60,'yes?')
-            if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Nil"]:
+            if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Temp_Up", "Temp_Down", "Nil"]:
                 #print(ButtonClick(MouseLocation()))
                 Selected_Molecule = ButtonClick(MouseLocation())
+            if ButtonClick(MouseLocation()) == "Temp_Up":
+                Temperature += 1
+            if ButtonClick(MouseLocation()) == "Temp_Down":
+                Temperature -= 1
         if event.type == pygame.KEYDOWN:
             key = pygame.key.get_pressed()
             if key[pygame.K_i]:
@@ -334,7 +359,8 @@ while running == True:
 
 
 
-    Screen_Temperature()
+
+    Screen_Controls()
     ButtonLocationPrintHolder = "Nil"
     pygame.display.update()
     clock.tick(60)

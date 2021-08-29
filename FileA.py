@@ -10,6 +10,7 @@ pygame.init()
 Ratios = [0.25, 1/3, 0.5, 2/3, 0.75, 5/6, 1]
 size_ratio = Ratios[2]
 
+
 display_width = int(1920*size_ratio)
 display_height = int(1080*size_ratio)
 Legal_Toggle = False
