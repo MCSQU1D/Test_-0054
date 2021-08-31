@@ -36,14 +36,6 @@ FPS_List = [300,300,300,300,300]
 global InformationMenuToggleBool
 InformationMenuToggleBool = False
 
-atoms = []
-atomsRect = []
-
-global atom_delete_list
-atom_delete_list = []
-global atom_create_list
-atom_create_list = []
-
 Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO", "AlO"]
 Element_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au"]
 Compound_List = ["H2O", "FeO", "AlO"]
@@ -55,7 +47,6 @@ ButtonInformationDict = {
     "InformationMenu" : "Information Menu: Information on atoms",
     "Temp_Up" : "Increase temperature of WorkSpace, can use up arrow",
     "Temp_Down" : "Decrease temperature of WorkSpace, can use down arrow",
-    "Clear_Atoms" : "Clear all atoms, can use 'c' key",
     "H" : "Hydrogen (H): A simple element, gas",
     "He" : "Helium (He): A simple element, gas",
     "C" : "Carbon (C): A nonmetal, powder",
@@ -100,10 +91,6 @@ def CreateCursor(x,y,size):
 
 
 
-
-
-
-### RENDERING SCREEN ###
 
 def PrintText(Xposition, Yposition, text, font, size, colour):
     global Selected_Molecule
@@ -162,14 +149,12 @@ def CreateButton(x1,y1,x2,y2,name):
     global Selected_Molecule
     buttonsDict[(x1, x2, y1, y2)] = name                                            #Sets the name for the button in the button dictionary
     pygame.draw.rect(screen, (255,255,255), (x1,y1,x2-x1,y2-y1),1)                  #Draws the button boundary
-    if name not in ["InformationPanel", "WorkSpace", "InformationMenu", "Temp_Up", "Temp_Down", "Clear_Atoms"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
+    if name not in ["InformationPanel", "WorkSpace", "InformationMenu", "Temp_Up", "Temp_Down"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
     if name == "Temp_Up":
         PrintText((x1+x2)/2,(y1+y2)/2,"↑",'Apple II Pro.otf',12,(255, 255, 255))
     if name == "Temp_Down":
         PrintText((x1+x2)/2,(y1+y2)/2,"↓",'Apple II Pro.otf',12,(255, 255, 255))
-    if name == "Clear_Atoms":
-        PrintText((x1+x2)/2,(y1+y2)/2,"CLR",'Apple II Pro.otf',12,(255, 255, 255))
     if name == Selected_Molecule:                                                   #if the button is the selected one, then it inverses the colour
         pygame.draw.rect(screen, Atom_Dict[Selected_Molecule]["Colour"], (x1+1,y1+1,x2-x1-2,y2-y1-2))        #White Background
         pygame.draw.rect(screen, (0,0,0), (x1,y1,x2-x1,y2-y1),1)                    #Black border
@@ -292,7 +277,7 @@ def Rendering_BaseScreen():
     CreateButton(10,10,900,500,'WorkSpace')
     CreateButton(10,510,900,530,'InformationPanel')
     PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))
-    PrintText(455, 25, "Temp: " + str(int(Temperature)) + "°C (" + str(int(Temperature*9/5+32)) + "°F)", 'Apple II Pro.otf',12,(255, 255, 255))
+    PrintText(455, 25, "Temp: " + str(Temperature) + "°C (" + str(int(Temperature*9/5+32)) + "°F)", 'Apple II Pro.otf',12,(255, 255, 255))
     if ButtonHover(MouseLocation()) != "Nil":
         name = ButtonInformationDict[ButtonHover(MouseLocation())]
         x1 = 10
@@ -305,226 +290,7 @@ def Rendering_BaseScreen():
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
 
-### RENDERING SCREEN END ###
-
-### PARTICLES START ###
-
-class atom:
-    def __init__(self, x_position, y_position, type):
-        self.x_position = x_position
-        self.y_position = y_position
-        self.type = type
-        self.x_velocity = 0
-        self.y_velocity = 0
-        self.colour = Atom_Dict[type]["Colour"]
-        self.temperature = 20
-        self.state = "solid"
-
-
-
-    def display_atom(self):
-        pass
-        rect = pygame.Rect(self.x_position, self.y_position, 1, 1)
-        pygame.draw.rect(screen, (self.colour), rect)
-
-
-def SimulatorMousePressedAdd(size):
-    if Selected_Molecule != "Nil":
-        mx,my = pygame.mouse.get_pos()
-        for i in range(-round(size/2)-1,round(size/2)+1):
-            for j in range(-round(size/2)-1,round(size/2)+1):
-                if mx+i < 900 and mx+i > 10 and my+j > 10 and my+j < 500:
-                    atoms.append(atom(mx+i, my+j, Selected_Molecule))
-
-
-def SimulatorMousePressedRemove(size):
-    mx,my = pygame.mouse.get_pos()
-    atomdeletelist=[]
-    for i in range(len(atoms)):
-        if atoms[i].x_position >= mx-round(cursor_size/2)-1 and atoms[i].x_position <= mx+round(cursor_size/2)+1 and atoms[i].y_position >= my-round(cursor_size/2)-1 and atoms[i].y_position <= my+round(cursor_size/2)+1:
-            atomdeletelist.append(atoms[i])
-    for i in atomdeletelist:
-        atoms.remove(i)
-        del i
-
-
-def Atom_Manager():
-    global atom_delete_list
-    global atom_create_list
-
-    for k in atom_delete_list:
-        if k in atoms:
-            atoms.remove(k)
-            del k
-    atom_delete_list = []
-
-    for j in atom_create_list:          #atom_create_list.append([atom_1.x_position, atom_1.y_position, f[1], atom_1.x_velocity, atom_1.y_velocity])
-        atoms.append(atom(j[0], j[1], j[2]))
-        atoms[-1].x_velocity = j[3]
-        atoms[-1].x_velocity = j[4]
-    atom_create_list = []
-
-
-def Rendering_Particles():
-
-    if pygame.mouse.get_pressed()[0] == 1:
-        SimulatorMousePressedAdd(cursor_size)
-        #pass
-
-    if pygame.mouse.get_pressed()[2] == 1:
-        SimulatorMousePressedRemove(cursor_size)
-
-    mx,my = pygame.mouse.get_pos()
-
-    for i in range(len(atoms)):
-        atoms[i].display_atom()
-
-
-### RENDERING PARTICLES END ###
-
-
-### PHYSICS START ###
-def contains(list, filter_x, filter_y, atomnumber):
-    for x in list:
-        if filter_x(x) and filter_y(x) and x != list[atomnumber]:
-            return True
-    return False
-
-
-def Stacking(atom_A, atom_B):
-    atom_A.y_velocity = 0
-    atom_A.y_position -= 1
-    Chemistry_Contact(atom_A, atom_B)
-
-def sortx_position(self):
-    return self.x_position
-
-def sorty_position(self):
-    return self.y_position
-
-
-
-
-
-def Physics():
-    global Temperature
-    Average_Temperature = 0
-
-    for i in range(len(atoms)):
-        Average_Temperature += atoms[i].temperature
-
-
-        if atoms[i].temperature < -273:
-            atoms[i].temperature = -273
-
-        if atoms[i].temperature < Temperature:
-            atoms[i].temperature += 1/10*(Temperature - atoms[i].temperature)
-        if atoms[i].temperature > Temperature:
-            atoms[i].temperature += 1/10*(Temperature - atoms[i].temperature)
-
-        if atoms[i].temperature > Atom_Dict[atoms[i].type]["Melting_temp"]:   #is melting
-            atoms[i].state = "liquid"
-        if atoms[i].temperature <= Atom_Dict[atoms[i].type]["Boiling_temp"]:   #is condensing
-            atoms[i].state = "liquid"
-        if atoms[i].temperature > Atom_Dict[atoms[i].type]["Boiling_temp"]:   #is boiling
-            atoms[i].state = "gas"
-        if atoms[i].temperature <= Atom_Dict[atoms[i].type]["Melting_temp"]:   #is freezing
-            atoms[i].state = "solid"
-
-        #BORDERS 10, 10, 900, 500
-        if atoms[i].x_position > 898:
-            atoms[i].x_position = 898
-            atoms[i].x_velocity = 0
-
-        if atoms[i].x_position < 12:
-            atoms[i].x_position = 12
-            atoms[i].x_velocity = 0
-
-        if atoms[i].y_position > 498:
-             atoms[i].y_position = 498
-             atoms[i].y_velocity = 0
-
-        if atoms[i].y_position < 12:
-            atoms[i].y_position = 12
-            atoms[i].y_velocity = 0
-
-        if atoms[i].state == "gas":
-            atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-4, 4+1)
-            atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-2, 2+1)
-
-        if atoms[i].state == "liquid":
-            atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
-            atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-1, 1+1)
-            atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-1, 1+1)
-
-        if atoms[i].state == "solid":
-            atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
-
-        atoms[i].y_position = atoms[i].y_position + atoms[i].y_velocity
-        atoms[i].x_position = atoms[i].x_position + atoms[i].x_velocity
-        atoms[i].y_position = round(atoms[i].y_position)
-        atoms[i].x_position = round(atoms[i].x_position)
-        atoms[i].x_velocity = 0
-
-        Coordinate_Holder = atoms[i].x_position, atoms[i].y_position
-        coordinates.append(Coordinate_Holder)
-
-    if len(atoms) != 0:
-        if Temperature < Average_Temperature/len(atoms):
-            Temperature -= 1/10*(Temperature - Average_Temperature/len(atoms))
-        if Temperature > Average_Temperature/len(atoms):
-            Temperature -= 1/10*(Temperature - Average_Temperature/len(atoms))
-
-
-
-    btoms = sorted(atoms, key=sortx_position)
-
-    for i in range(len(atoms)):                     #Should check only when there is movement, and only on the particles that move
-        if btoms[i].y_position == btoms[i-1].y_position and btoms[i].x_position == btoms[i-1].x_position and btoms[i] != btoms[i-1]:
-            Stacking(btoms[i],btoms[i-1])
-            btoms = sorted(atoms, key=sortx_position)
-
-
-        if contains(atoms, lambda x: x.x_position == atoms[i].x_position, lambda x: x.y_position == atoms[i].y_position, i):
-            Stacking(atoms[i],atoms[i-1])
-            btoms = sorted(atoms, key=sortx_position)
-
-
-
-### PHYSICS END ###
-
-
-
-
-
-
-### CHEMISTRY START ###
-
-def Chemistry_Contact(atom_1, atom_2):
-    if atom_1.type in Reactant_1_list and atom_2.type in Reactant_2_list:
-        if Reaction_Dict[atom_1.type]["Reactant_2"] == atom_2.type:
-            Chemistry_Reaction(atom_1, atom_2)
-    elif atom_2.type in Reactant_1_list and atom_1.type in Reactant_2_list:
-        if Reaction_Dict[atom_2.type]["Reactant_2"] == atom_1.type:
-            Chemistry_Reaction(atom_2, atom_1)
-
-
-def Chemistry_Reaction(atom_1, atom_2):
-    global Temperature
-    global atom_delete_list
-    global atom_create_list
-    if Temperature >= Reaction_Dict[atom_1.type]["Temp_Required"]:
-        Temperature += (1/10)*Reaction_Dict[atom_1.type]["Temp_Added"]
-        if "+" in Reaction_Dict[atom_1.type]["Resultant"]:
-            f = Reaction_Dict[atom_1.type]["Resultant"].split("+")
-            atom_create_list.append([atom_1.x_position, atom_1.y_position, f[0], atom_1.x_velocity, atom_1.y_velocity])
-            atom_create_list.append([atom_1.x_position, atom_1.y_position+1, f[1], atom_1.x_velocity, atom_1.y_velocity])
-        else:
-            atom_create_list.append([atom_1.x_position, atom_1.y_position, Reaction_Dict[atom_1.type]["Resultant"], atom_1.x_velocity, atom_1.y_velocity])
-
-
-        atom_delete_list.append(atom_1)
-        atom_delete_list.append(atom_2)
+### BASE SCREEN END
 
 
 
@@ -532,7 +298,6 @@ def Chemistry_Reaction(atom_1, atom_2):
 def Screen_Controls():
     CreateButton(910,480,950,500,'Temp_Up')
     CreateButton(910,510,950,530,'Temp_Down')
-    CreateButton(910,450,950,470,'Clear_Atoms')
     global Temperature
     if pygame.key.get_pressed()[pygame.K_UP] == True:
         Temperature += 1
@@ -540,11 +305,6 @@ def Screen_Controls():
         Temperature -= 1
     if Temperature < -273:
         Temperature = -273
-
-
-
-
-
 
 
 
@@ -567,44 +327,7 @@ for i in Chemical_Information_Other:
 
     Atom_Dict[j[1]] = j_dict
 
-Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO"]
-Chemical_Information = LoadInformation("chemicalinfomation.txt")
 
-Atom_Dict = {}
-Chemical_Information_Other = LoadInformation("chemicalinfomation.txt")
-Chemical_Information_Other.pop(0)
-for i in Chemical_Information_Other:
-    j = i.split("|")
-    j_dict = {}
-    j_dict["Melting_temp"] = float(j[5])
-    j_dict["Boiling_temp"] = float(j[6])
-    j_dict["Colour"] = int(j[8]),int(j[9]),int(j[10])
-    Atom_Dict[j[1]] = j_dict
-
-Reaction_Dict = {}
-Reaction_Information = LoadInformation("chemicalreaction.txt")
-Reaction_Information.pop(0)
-for i in Reaction_Information:
-    j = i.split("|")
-    j_dict = {}
-    j_dict["Reactant_1"] = j[0]
-    j_dict["Reactant_1_Quantity"] = int(j[1])
-    j_dict["Reactant_2"] = j[2]
-    j_dict["Reactant_2_Quantity"] = int(j[3])
-    j_dict["Resultant"] = j[4]
-    j_dict["Resultant_Quantity"] = int(j[5])
-    j_dict["Temp_Required"] = float(j[6])
-    j_dict["Temp_Added"] = float(j[7])
-    Reaction_Dict[j[0]] = j_dict
-
-Reactant_1_list = []
-Reactant_2_list = []
-for i in Reaction_Dict:
-    Reactant_1_list.append(i)
-    Reactant_2_list.append(Reaction_Dict[i]["Reactant_2"])
-
-
-coordinates = []
 
 
 ### MAIN LOOP ###
@@ -619,34 +342,20 @@ while running == True:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             #CreateButton(450,40,550,60,'yes?')
-            if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Temp_Up", "Temp_Down", "Clear_Atoms", "Nil"]:
+            if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Temp_Up", "Temp_Down", "Nil"]:
                 #print(ButtonClick(MouseLocation()))
                 Selected_Molecule = ButtonClick(MouseLocation())
             if ButtonClick(MouseLocation()) == "Temp_Up":
                 Temperature += 1
             if ButtonClick(MouseLocation()) == "Temp_Down":
                 Temperature -= 1
-            if ButtonClick(MouseLocation()) == "Clear_Atoms":
-                for i in atoms:
-                    atom_delete_list.append(i)
         if event.type == pygame.KEYDOWN:
             key = pygame.key.get_pressed()
             if key[pygame.K_i]:
                 InformationMenuToggle()
-            if key[pygame.K_c]:
-                for i in atoms:
-                    atom_delete_list.append(i)
 
 
     Rendering_BaseScreen()
-
-    Atom_Manager() #Here because of threading
-
-
-    Rendering_Particles()
-    Physics()
-
-
 
 
 

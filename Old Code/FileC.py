@@ -23,9 +23,14 @@ screen.fill((0,0,0))  # (R, G, B)
 
 
 ### VARIABLE DECLARATION ###
-Temperature = 20
+Temperature = 2000
 start = 0
 end = 0
+global atom_delete_list
+atom_delete_list = []
+global atom_create_list
+atom_create_list = []
+
 ### FUNCTIONS ###
 def CreateCursor(x,y,size):
     pygame.draw.rect(screen, (255,255,255), (x-size/2,y-size/2,size,size),1)    #prints the square cursor
@@ -46,8 +51,6 @@ def LoadInformation(file):
     file_opened = open(file_pathname,"r")
     file_split = file_opened.read().split("\n")
     return file_split
-
-
 
 
 
@@ -91,6 +94,23 @@ def SimulatorMousePressedRemove(size):
         del i
 
 
+def Atom_Manager():
+    global atom_delete_list
+    global atom_create_list
+
+    for k in atom_delete_list:
+        if k in atoms:
+            atoms.remove(k)
+            del k
+    atom_delete_list = []
+
+    for j in atom_create_list:          #atom_create_list.append([atom_1.x_position, atom_1.y_position, f[1], atom_1.x_velocity, atom_1.y_velocity])
+        atoms.append(atom(j[0], j[1], j[2]))
+        atoms[-1].x_velocity = j[3]
+        atoms[-1].x_velocity = j[4]
+    atom_create_list = []
+
+
 def Rendering_Particles():
     screen.fill((0,0,0))  # (R, G, B)
 
@@ -108,7 +128,7 @@ def Rendering_Particles():
         atoms[i].display_atom()
 
 
-### PHYSICS END ###
+### RENDERING PARTICLES END ###
 
 
 
@@ -125,6 +145,7 @@ def contains(list, filter_x, filter_y, atomnumber):
 def Stacking(atom_A, atom_B):
     atom_A.y_velocity = 0
     atom_A.y_position -= 1
+    Chemistry_Contact(atom_A, atom_B)
 
 def sortx_position(self):
     return self.x_position
@@ -137,15 +158,20 @@ def sorty_position(self):
 
 
 def Physics():
+    global Temperature
+    Average_Temperature = 0
+
     for i in range(len(atoms)):
+        Average_Temperature += atoms[i].temperature
+
 
         if atoms[i].temperature < -273:
             atoms[i].temperature = -273
 
         if atoms[i].temperature < Temperature:
-            atoms[i].temperature += 1
+            atoms[i].temperature += 1/10*(Temperature - atoms[i].temperature)
         if atoms[i].temperature > Temperature:
-            atoms[i].temperature += 1
+            atoms[i].temperature += 1/10*(Temperature - atoms[i].temperature)
 
         if atoms[i].temperature > Atom_Dict[atoms[i].type]["Melting_temp"]:   #is melting
             atoms[i].state = "liquid"
@@ -194,11 +220,22 @@ def Physics():
         Coordinate_Holder = atoms[i].x_position, atoms[i].y_position
         coordinates.append(Coordinate_Holder)
 
+    if len(atoms) != 0:
+        if Temperature < Average_Temperature/len(atoms):
+            Temperature -= 1/10*(Temperature - Average_Temperature/len(atoms))
+        if Temperature > Average_Temperature/len(atoms):
+            Temperature -= 1/10*(Temperature - Average_Temperature/len(atoms))
+
+        #Temperature += 1/10*Average_Temperature/len(atoms)
+        print(Average_Temperature/len(atoms))
+
     btoms = sorted(atoms, key=sortx_position)
+
     for i in range(len(atoms)):                     #Should check only when there is movement, and only on the particles that move
         if btoms[i].y_position == btoms[i-1].y_position and btoms[i].x_position == btoms[i-1].x_position and btoms[i] != btoms[i-1]:
             Stacking(btoms[i],btoms[i-1])
             btoms = sorted(atoms, key=sortx_position)
+
 
         if contains(atoms, lambda x: x.x_position == atoms[i].x_position, lambda x: x.y_position == atoms[i].y_position, i):
             Stacking(atoms[i],atoms[i-1])
@@ -215,22 +252,31 @@ def Physics():
 
 ### CHEMISTRY START ###
 
-def CheckContact(atom_1, atom_2):
-    atom_1CheckY1 = atom_1.y_position - 1
-    atom_1CheckY2 = atom_1.y_position + 1
-    atom_1CheckX1 = atom_1.x_position - 1
-    atom_1CheckX2 = atom_1.x_position + 1
-
-    if atom_2.y_position >= atom_1CheckY1 and atom_2.y_position <= atom_1CheckY2 and atom_2.x_position >= atom_1CheckX1 and atom_2.x_position <= atom_1CheckX2:
-        return True
-
+def Chemistry_Contact(atom_1, atom_2):
+    if atom_1.type in Reactant_1_list and atom_2.type in Reactant_2_list:
+        if Reaction_Dict[atom_1.type]["Reactant_2"] == atom_2.type:
+            Chemistry_Reaction(atom_1, atom_2)
+    elif atom_2.type in Reactant_1_list and atom_1.type in Reactant_2_list:
+        if Reaction_Dict[atom_2.type]["Reactant_2"] == atom_1.type:
+            Chemistry_Reaction(atom_2, atom_1)
 
 
+def Chemistry_Reaction(atom_1, atom_2):
+    global Temperature
+    global atom_delete_list
+    global atom_create_list
+    if Temperature >= Reaction_Dict[atom_1.type]["Temp_Required"]:
+        Temperature += (1/10)*Reaction_Dict[atom_1.type]["Temp_Added"]
+        if "+" in Reaction_Dict[atom_1.type]["Resultant"]:
+            f = Reaction_Dict[atom_1.type]["Resultant"].split("+")
+            atom_create_list.append([atom_1.x_position, atom_1.y_position, f[0], atom_1.x_velocity, atom_1.y_velocity])
+            atom_create_list.append([atom_1.x_position, atom_1.y_position+1, f[1], atom_1.x_velocity, atom_1.y_velocity])
+        else:
+            atom_create_list.append([atom_1.x_position, atom_1.y_position, f[1], atom_1.x_velocity, atom_1.y_velocity])
 
-def Chemistry():
-    #for i in range(len(atoms)):
-        #atoms[i].type
-    pass
+
+        atom_delete_list.append(atom_1)
+        atom_delete_list.append(atom_2)
 
 
 
@@ -242,8 +288,6 @@ def Chemistry():
 
 
 ### LOADING ###
-
-Selected_Molecule = input("THing: ")
 
 Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO"]
 Chemical_Information = LoadInformation("chemicalinfomation.txt")
@@ -259,6 +303,28 @@ for i in Chemical_Information_Other:
     j_dict["Colour"] = int(j[8]),int(j[9]),int(j[10])
     Atom_Dict[j[1]] = j_dict
 
+Reaction_Dict = {}
+Reaction_Information = LoadInformation("chemicalreaction.txt")
+Reaction_Information.pop(0)
+for i in Reaction_Information:
+    j = i.split("|")
+    j_dict = {}
+    j_dict["Reactant_1"] = j[0]
+    j_dict["Reactant_1_Quantity"] = int(j[1])
+    j_dict["Reactant_2"] = j[2]
+    j_dict["Reactant_2_Quantity"] = int(j[3])
+    j_dict["Resultant"] = j[4]
+    j_dict["Resultant_Quantity"] = int(j[5])
+    j_dict["Temp_Required"] = float(j[6])
+    j_dict["Temp_Added"] = float(j[7])
+    Reaction_Dict[j[0]] = j_dict
+
+Reactant_1_list = []
+Reactant_2_list = []
+for i in Reaction_Dict:
+    Reactant_1_list.append(i)
+    Reactant_2_list.append(Reaction_Dict[i]["Reactant_2"])
+
 
 coordinates = []
 
@@ -269,7 +335,6 @@ screen.fill((0,0,0))  # (R, G, B)
 
 
 
-a = 0
 cursor_size = 4
 running = True
 while running == True:
@@ -285,19 +350,29 @@ while running == True:
             if key[pygame.K_c]:
                 Selected_Molecule = input("THing: ")
 
+    Atom_Manager() #Here because of threading
 
-    threads = []
-    Threading_Rendering_Particles = threading.Thread(target=Rendering_Particles)
-    threads.append(Threading_Rendering_Particles)
-    Threading_Rendering_Particles.start()
 
-    Threading_Physics = threading.Thread(target=Physics)
-    threads.append(Threading_Physics)
-    Threading_Physics.start()
+
+    #threads = []
+    #Threading_Rendering_Particles = threading.Thread(target=Rendering_Particles)
+    #threads.append(Threading_Rendering_Particles)
+    #Threading_Rendering_Particles.start()
+
+    #Threading_Physics = threading.Thread(target=Physics)
+    #threads.append(Threading_Physics)
+    #Threading_Physics.start()
+
+
+
+    Rendering_Particles()
+    Physics()
+
+
 
     ### CONSIDER LOCKING VARIABLES THAT ARE SHARED https://docs.python.org/3/library/threading.html#lock-objects and https://realpython.com/intro-to-python-threading/
 
-
+    print("Temp: " + str(Temperature))
     pygame.display.update()
     clock.tick(60)
     end = perf_counter()
