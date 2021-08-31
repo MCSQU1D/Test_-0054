@@ -27,6 +27,10 @@ ButtonLocationPrintHolder = "Nil"
 
 global buttonsDict
 global Temperature
+global cursor_size
+cursor_size = 4
+global Physics_Running
+Physics_Running = True
 buttonsDict = {}
 start = 0
 end = 0
@@ -53,22 +57,22 @@ ButtonInformationDict = {
     "WorkSpace" : "Workspace: area for your reactions",
     "InformationPanel" : "Information Panel: Displays Information",
     "InformationMenu" : "Information Menu: Information on atoms",
-    "Temp_Up" : "Increase temperature of WorkSpace, can use up arrow",
-    "Temp_Down" : "Decrease temperature of WorkSpace, can use down arrow",
+    "Temp_Up" : "Increase temperature of Workspace, can use up arrow",
+    "Temp_Down" : "Decrease temperature of Workspace, can use down arrow",
     "Clear_Atoms" : "Clear all atoms, can use 'c' key",
-    "H" : "Hydrogen (H): A simple element, gas",
-    "He" : "Helium (He): A simple element, gas",
-    "C" : "Carbon (C): A nonmetal, powder",
-    "N" : "Nitrogen (N): A simple element, gas",
-    "O" : "Oxygen (O): A simple element, gas",
-    "Ti" : "Titanium (Ti): A metal, powder",
-    "Na" : "Sodium (Na): A alkali metal, powder",
-    "Al" : "Aluminium (Al): A metal, powder",
-    "Fe" : "Iron (Fe): A metal, powder",
-    "Au" : "Gold (Au): A metal, powder",
-    "H2O" : "Water (H2O): A simple compound, liquid",
-    "FeO" : "Iron Oxide (FeO): A simple compound, powder",
-    "AlO" : "Alumina (AlO): A simple compound, powder"
+    "Physics_status" : "Plays/Pauses the particles movement, can use spacebar",
+    "H" : "Hydrogen (H): A simple element",
+    "He" : "Helium (He): A simple element",
+    "C" : "Carbon (C): A nonmetal",
+    "N" : "Nitrogen (N): A simple element",
+    "O" : "Oxygen (O): A simple element",
+    "Na" : "Sodium (Na): A alkali metal",
+    "Al" : "Aluminium (Al): A metal",
+    "Fe" : "Iron (Fe): A metal",
+    "Au" : "Gold (Au): A metal",
+    "H2O" : "Water (H2O): A simple compound",
+    "FeO" : "Iron Oxide (FeO): A simple compound",
+    "AlO" : "Alumina (Al2O3): A simple compound"
 }
 
 
@@ -162,7 +166,7 @@ def CreateButton(x1,y1,x2,y2,name):
     global Selected_Molecule
     buttonsDict[(x1, x2, y1, y2)] = name                                            #Sets the name for the button in the button dictionary
     pygame.draw.rect(screen, (255,255,255), (x1,y1,x2-x1,y2-y1),1)                  #Draws the button boundary
-    if name not in ["InformationPanel", "WorkSpace", "InformationMenu", "Temp_Up", "Temp_Down", "Clear_Atoms"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
+    if name not in ["InformationPanel", "WorkSpace", "InformationMenu", "Temp_Up", "Temp_Down", "Clear_Atoms", "Physics_status"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
     if name == "Temp_Up":
         PrintText((x1+x2)/2,(y1+y2)/2,"↑",'Apple II Pro.otf',12,(255, 255, 255))
@@ -170,6 +174,13 @@ def CreateButton(x1,y1,x2,y2,name):
         PrintText((x1+x2)/2,(y1+y2)/2,"↓",'Apple II Pro.otf',12,(255, 255, 255))
     if name == "Clear_Atoms":
         PrintText((x1+x2)/2,(y1+y2)/2,"CLR",'Apple II Pro.otf',12,(255, 255, 255))
+    if name == "Physics_status":
+        if Physics_Running == True:
+            PrintText((x1+x2)/2,(y1+y2)/2,"PLY",'Apple II Pro.otf',12,(255, 255, 255))
+        if Physics_Running == False:
+            pygame.draw.rect(screen, (255, 255, 255), (x1+1,y1+1,x2-x1-2,y2-y1-2))
+            pygame.draw.rect(screen, (0,0,0), (x1,y1,x2-x1,y2-y1),1)
+            PrintText((x1+x2)/2,(y1+y2)/2,"PSE",'Apple II Pro.otf',12,(0, 0, 0))
     if name == Selected_Molecule:                                                   #if the button is the selected one, then it inverses the colour
         pygame.draw.rect(screen, Atom_Dict[Selected_Molecule]["Colour"], (x1+1,y1+1,x2-x1-2,y2-y1-2))        #White Background
         pygame.draw.rect(screen, (0,0,0), (x1,y1,x2-x1,y2-y1),1)                    #Black border
@@ -292,6 +303,7 @@ def Rendering_BaseScreen():
     CreateButton(10,10,900,500,'WorkSpace')
     CreateButton(10,510,900,530,'InformationPanel')
     PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))
+    PrintText(240, 25, "Particles: " + str(len(atoms)), 'Apple II Pro.otf',12,(255, 255, 255))
     PrintText(455, 25, "Temp: " + str(int(Temperature)) + "°C (" + str(int(Temperature*9/5+32)) + "°F)", 'Apple II Pro.otf',12,(255, 255, 255))
     if ButtonHover(MouseLocation()) != "Nil":
         name = ButtonInformationDict[ButtonHover(MouseLocation())]
@@ -305,7 +317,33 @@ def Rendering_BaseScreen():
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
 
+
+
+
+
+def BaseScreen_Adjustment():
+    pygame.draw.line(screen, (255,255,255), (10,10), (899,10), 1)
+    pygame.draw.line(screen, (255,255,255), (899,10), (899,499), 1)
+    pygame.draw.line(screen, (255,255,255), (899,499), (10,499), 1)
+    pygame.draw.line(screen, (255,255,255), (10,499), (10,10), 1)
+    #pass
+
+
 ### RENDERING SCREEN END ###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### PARTICLES START ###
 
@@ -381,6 +419,12 @@ def Rendering_Particles():
 
 
 ### RENDERING PARTICLES END ###
+
+
+
+
+
+
 
 
 ### PHYSICS START ###
@@ -526,6 +570,7 @@ def Chemistry_Reaction(atom_1, atom_2):
         atom_delete_list.append(atom_1)
         atom_delete_list.append(atom_2)
 
+### CHEMISTRY END ###
 
 
 
@@ -533,11 +578,16 @@ def Screen_Controls():
     CreateButton(910,480,950,500,'Temp_Up')
     CreateButton(910,510,950,530,'Temp_Down')
     CreateButton(910,450,950,470,'Clear_Atoms')
+    CreateButton(910,420,950,440,'Physics_status')
     global Temperature
     if pygame.key.get_pressed()[pygame.K_UP] == True:
         Temperature += 1
+    if pygame.key.get_pressed()[pygame.K_UP] == True and pygame.key.get_pressed()[pygame.K_LSHIFT] == True:
+        Temperature += 100
     if pygame.key.get_pressed()[pygame.K_DOWN] == True:
         Temperature -= 1
+    if pygame.key.get_pressed()[pygame.K_DOWN] == True and pygame.key.get_pressed()[pygame.K_LSHIFT] == True:
+        Temperature -= 100
     if Temperature < -273:
         Temperature = -273
 
@@ -551,6 +601,10 @@ def Screen_Controls():
 
 
 ### LOADING ###
+
+
+
+
 global Information_Menu_Holder
 Information_Menu_Holder = LoadInformation("chemicalinfomation.txt")
 
@@ -567,7 +621,7 @@ for i in Chemical_Information_Other:
 
     Atom_Dict[j[1]] = j_dict
 
-Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO"]
+Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO", "AlO"]
 Chemical_Information = LoadInformation("chemicalinfomation.txt")
 
 Atom_Dict = {}
@@ -607,9 +661,15 @@ for i in Reaction_Dict:
 coordinates = []
 
 
+
+
+
+### END LOADING ###
+
+
+
 ### MAIN LOOP ###
-global cursor_size
-cursor_size = 4
+
 
 running = True
 while running == True:
@@ -619,13 +679,18 @@ while running == True:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             #CreateButton(450,40,550,60,'yes?')
-            if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Temp_Up", "Temp_Down", "Clear_Atoms", "Nil"]:
+            if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Temp_Up", "Temp_Down", "Clear_Atoms", "Physics_status", "Nil"]:
                 #print(ButtonClick(MouseLocation()))
                 Selected_Molecule = ButtonClick(MouseLocation())
             if ButtonClick(MouseLocation()) == "Temp_Up":
                 Temperature += 1
             if ButtonClick(MouseLocation()) == "Temp_Down":
                 Temperature -= 1
+            if ButtonClick(MouseLocation()) == "Physics_status":
+                if Physics_Running == True:
+                    Physics_Running = False
+                elif Physics_Running == False:
+                    Physics_Running = True
             if ButtonClick(MouseLocation()) == "Clear_Atoms":
                 for i in atoms:
                     atom_delete_list.append(i)
@@ -636,19 +701,25 @@ while running == True:
             if key[pygame.K_c]:
                 for i in atoms:
                     atom_delete_list.append(i)
+            if key[pygame.K_SPACE]:
+                if Physics_Running == True:
+                    Physics_Running = False
+                elif Physics_Running == False:
+                    Physics_Running = True
 
 
     Rendering_BaseScreen()
 
-    Atom_Manager() #Here because of threading
+    Atom_Manager()
 
 
     Rendering_Particles()
-    Physics()
+
+    if Physics_Running == True:
+        Physics()
 
 
-
-
+    BaseScreen_Adjustment()
 
 
 
