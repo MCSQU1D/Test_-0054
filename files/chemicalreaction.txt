@@ -1,5 +1,5 @@
 Reactant_1|Reactant_1 Quantity|Reactant_2|Reactant_2 Quantity|Result|Result Quantity|Temp required|Temp result
 H|1|O|1|H2O|1|500|500
-Fe|1|O|1|FeO|1|0|0
-Al|1|O|1|AlO|1|0|0
-FeO|1|Al|1|Fe+AlO|1|900|4000
+Fe|1|O|1|FeO|1|-273.15|0
+Al|1|O|1|AlO|1|-273.15|0
+FeO|1|Al|1|Fe+AlO|1|900|3500
