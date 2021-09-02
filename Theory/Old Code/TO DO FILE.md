@@ -12,6 +12,6 @@
 - [x] #09: Design Particle system
 - [x] #10: Create Particles
 - [x] #11: Write Chemical Information (Tooltips, Debug characteristics)
-- [ ] #12: ???
-- [ ] #13: Profit
+- [x] #12: ???
+- [x] #13: Profit
 - [ ] #14: Polishing (Resizing, Cursor changes, Condensing Code, Keyboard Shortcuts)

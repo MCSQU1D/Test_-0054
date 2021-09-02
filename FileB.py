@@ -1,4 +1,4 @@
-import pygame
+import pygame                           #import all modules
 from time import perf_counter
 import random
 import os
@@ -34,9 +34,9 @@ cursor_size = 4
 global Physics_Running
 Physics_Running = True
 buttonsDict = {}
-start = 0
+start = 0                       # for fps calculations
 end = 0
-FPS = 300
+FPS = 300                       #set at a non 0 number
 Temperature = 20
 FPS_List = [300,300,300,300,300]
 global InformationMenuToggleBool
@@ -76,7 +76,7 @@ ButtonInformationDict = {
     "H2O" : "Water (H2O): A simple compound",
     "FeO" : "Iron Oxide (FeO): A simple compound",
     "AlO" : "Alumina (Al2O3): A simple compound",
-    "Mef" : "Not Mef (C10H15N): Hehe Durgs"             #Cheeky Joke
+    "Mef" : "Not Mef (C10H15N): Hehe Durgs"             #Cheeky Joke, wrong name right formula but you didn't hear it from me
 }
 
 
@@ -100,7 +100,7 @@ def LoadInformation(file):              #For loading information from .txt files
             file_finder = i
     file_pathname = os.getcwd()+"/files/" +file  #finds the files folder
     file_opened = open(file_pathname,"r")
-    file_split = file_opened.read().split("\n")
+    file_split = file_opened.read().split("\n")     #splits on the enter/new line
     return file_split                               #Reads the file as a list of each line
 
 
@@ -133,7 +133,7 @@ def ButtonClick(Mouse_Position):                #takes the mouse postition, and 
     x, y = Mouse_Position
     ButtonLocationPrintHolder = "Nil"
     for ButtonLocations in buttonsDict:
-        xlimithigh = ButtonLocations[0]
+        xlimithigh = ButtonLocations[0]                 #Stores the name as the definition of the location/coords
         xlimitlow = ButtonLocations[1]
         ylimithigh = ButtonLocations[2]
         ylimitlow = ButtonLocations[3]
@@ -143,7 +143,7 @@ def ButtonClick(Mouse_Position):                #takes the mouse postition, and 
     return ButtonLocationPrintHolder        # returns button name
 
 
-def LoadImage(file):
+def LoadImage(file):                        #very similiar to finding a .txt file, except with .jpg
     path = os.path.join("files")
     filelist = []
     for r, d, f in os.walk(path):
@@ -153,15 +153,14 @@ def LoadImage(file):
     for i in filelist:
         if file in i:
             return pygame.image.load(os.path.join('files', i))
-    return pygame.image.load(os.path.join('files', ("No_Image_Found.jpg")))
+    return pygame.image.load(os.path.join('files', ("No_Image_Found.jpg")))     #if image cant be found, just the no image found image
 
 def ButtonHover(Mouse_Position):
     x, y = Mouse_Position
-    #print(buttonsDict)
     ButtonLocationPrintHolder = "Nil"
     for ButtonLocations in buttonsDict:
-        xlimithigh = ButtonLocations[0]
-        xlimitlow = ButtonLocations[1]
+        xlimithigh = ButtonLocations[0]             #pretty much the same as button click, but run full time to find the button
+        xlimitlow = ButtonLocations[1]              #the cursor is hovering over
         ylimithigh = ButtonLocations[2]
         ylimitlow = ButtonLocations[3]
 
@@ -177,14 +176,14 @@ def CreateButton(x1,y1,x2,y2,name):
     if name not in ["InformationPanel", "WorkSpace", "InformationMenu", "Temp_Up", "Temp_Down", "Clear_Atoms", "Physics_status", "Info_status"] and name != Selected_Molecule: #Only displays the name of the buttons on the sides
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
     if name == "Temp_Up":
-        PrintText((x1+x2)/2,(y1+y2)/2,"↑",'Apple II Pro.otf',12,(255, 255, 255))
+        PrintText((x1+x2)/2,(y1+y2)/2,"↑",'Apple II Pro.otf',12,(255, 255, 255))   #Certain buttons have different features, standard is the atom buttons on the side
     if name == "Temp_Down":
         PrintText((x1+x2)/2,(y1+y2)/2,"↓",'Apple II Pro.otf',12,(255, 255, 255))
     if name == "Clear_Atoms":
         PrintText((x1+x2)/2,(y1+y2)/2,"CLR",'Apple II Pro.otf',12,(255, 255, 255))
     if name == "Physics_status":
         if Physics_Running == True:
-            PrintText((x1+x2)/2,(y1+y2)/2,"PLY",'Apple II Pro.otf',12,(255, 255, 255))
+            PrintText((x1+x2)/2,(y1+y2)/2,"PLY",'Apple II Pro.otf',12,(255, 255, 255))      #change colour when active
         if Physics_Running == False:
             pygame.draw.rect(screen, (255, 255, 255), (x1+1,y1+1,x2-x1-2,y2-y1-2))
             pygame.draw.rect(screen, (0,0,0), (x1,y1,x2-x1,y2-y1),1)
@@ -204,11 +203,11 @@ def CreateButton(x1,y1,x2,y2,name):
 
 
 def InformationMenuToggle():
-    global InformationMenuToggleBool
+    global InformationMenuToggleBool            #displays information menu when active
     if InformationMenuToggleBool == True:
         InformationMenuToggleBool = False
         if (20,220,40,490) in buttonsDict:
-            del buttonsDict[(20,220,40,490)]
+            del buttonsDict[(20,220,40,490)]    #is created as a button so tool tip on bottom works
     elif InformationMenuToggleBool == False:
         InformationMenuToggleBool = True
 
@@ -271,7 +270,7 @@ def InformationMenu():
             b += 20
             PrintText(160+len(j)*4.5,(b),j,'Apple II Pro.otf',10,(255, 255, 255))  # broken and i don't know why - fixed
 
-def Paragrapher(string,length,fontsize,xposition,yposition):
+def Paragrapher(string,length,fontsize,xposition,yposition):        #same paragrapher function as FileA, used for the information menu
     TextSplit = string.split(' ')
     TextHolder = ""
     TextFinal = []
@@ -289,26 +288,26 @@ def Paragrapher(string,length,fontsize,xposition,yposition):
         PrintText(20+len(text)*4.5,yposition, text,'Apple II Pro.otf',fontsize,(255, 255, 255))
         yposition += 12
 
-def ScreenMagic():       #Changes the mouse
+def ScreenMagic():       #Changes the mouse cursor to the square
     global cursor_size
     screen.fill((0,0,0))  # (R, G, B)
-    pygame.mouse.set_visible(True)
+    pygame.mouse.set_visible(True)      #shows mouse unless hidden
     if ButtonHover(MouseLocation()) == "WorkSpace":
-        pygame.mouse.set_visible(False)
+        pygame.mouse.set_visible(False)     #hide mouse
         work_width, work_height = MouseLocation()
         work_height = 499 - work_height
         work_width -= 11
         PrintText(830, 25, "x:" + str(work_width) + " y:" + str(work_height), 'Apple II Pro.otf',12,(255, 255, 255))
         mx, my = MouseLocation()
-        CreateCursor(mx,my, cursor_size)
-    pygame.draw.rect(screen, (0,0,0), (0,0,10,500),0)
+        CreateCursor(mx,my, cursor_size)            #creates the rectangle cursor
+    pygame.draw.rect(screen, (0,0,0), (0,0,10,500),0)       #draws black borders over cursor
     pygame.draw.rect(screen, (0,0,0), (0,500,960,540),0)
     pygame.draw.rect(screen, (0,0,0), (900,0,960,540),0)
     pygame.draw.rect(screen, (0,0,0), (0,0,960,10),0)
 
 
 
-def Rendering_BaseScreen():
+def Rendering_BaseScreen():         #renders the backscreen
     InformationMenu()
     mx, my = pygame.mouse.get_pos()
     List_Shifter = 0
@@ -316,9 +315,9 @@ def Rendering_BaseScreen():
         CreateButton(910,10+25*List_Shifter,950,30+25*List_Shifter, i)
         List_Shifter += 1
 
-    CreateButton(10,10,900,500,'WorkSpace')
+    CreateButton(10,10,900,500,'WorkSpace')                 #all rectanges are stored as buttons, so the tooltip panel will work
     CreateButton(10,510,900,530,'InformationPanel')
-    PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))
+    PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))        # prints the fps, particles, coords and temp on top
     PrintText(240, 25, "Particles: " + str(len(atoms)), 'Apple II Pro.otf',12,(255, 255, 255))
     PrintText(455, 25, "Temp: " + str(int(Temperature)) + "°C (" + str(int(Temperature*9/5+32)) + "°F)", 'Apple II Pro.otf',12,(255, 255, 255))
     if ButtonHover(MouseLocation()) in ButtonInformationDict:
@@ -335,8 +334,8 @@ def Rendering_BaseScreen():
         y1 = 510
         y2 = 530
         PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
-    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-    if ButtonHover(MouseLocation()) in Atom_List:
+    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)         #Changes the cursor from arrow to hand pointer
+    if ButtonHover(MouseLocation()) in Atom_List or ButtonHover(MouseLocation()) in ["Temp_Up", "Temp_Down", "Clear_Atoms", "Physics_status", "Info_status"]:
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
 
@@ -344,7 +343,7 @@ def Rendering_BaseScreen():
 
 
 
-def BaseScreen_Adjustment():
+def BaseScreen_Adjustment():                            #redraws the white workspace line borders, had issues with this
     pygame.draw.line(screen, (255,255,255), (10,10), (899,10), 1)
     pygame.draw.line(screen, (255,255,255), (899,10), (899,499), 1)
     pygame.draw.line(screen, (255,255,255), (899,499), (10,499), 1)
@@ -371,45 +370,44 @@ def BaseScreen_Adjustment():
 ### PARTICLES START ###
 
 class atom:
-    def __init__(self, x_position, y_position, type):
+    def __init__(self, x_position, y_position, type):           #parameters to create an molecule/atom
         self.x_position = x_position
         self.y_position = y_position
         self.type = type
         self.x_velocity = 0
         self.y_velocity = 0
-        self.colour = Atom_Dict[type]["Colour"]
+        self.colour = Atom_Dict[type]["Colour"]         #uses the type (chemical symbol) to find the colour
         self.temperature = Temperature
-        self.state = "solid"
+        self.state = "solid"                            #sets state as solid, although this changes before frame is rendered
 
 
 
     def display_atom(self):
-        pass
-        rect = pygame.Rect(self.x_position, self.y_position, 1, 1)
+        rect = pygame.Rect(self.x_position, self.y_position, 1, 1)  #displays the atom as a 1x1 pixil
         pygame.draw.rect(screen, (self.colour), rect)
 
 
-def SimulatorMousePressedAdd(size):
+def SimulatorMousePressedAdd(size):                        #fills cursor square with particles
     if Selected_Molecule != "Nil":
         mx,my = pygame.mouse.get_pos()
-        for i in range(-round(size/2)-1,round(size/2)+1):
+        for i in range(-round(size/2)-1,round(size/2)+1):       #fills square if only in workspace area
             for j in range(-round(size/2)-1,round(size/2)+1):
                 if mx+i < 900 and mx+i > 10 and my+j > 10 and my+j < 500:
                     atoms.append(atom(mx+i, my+j, Selected_Molecule))
 
 
-def SimulatorMousePressedRemove(size):
+def SimulatorMousePressedRemove(size):      #adds all atoms in square into a delete list which is deleted, so it doesn't delete objects in a list mid loop
     mx,my = pygame.mouse.get_pos()
     atomdeletelist=[]
     for i in range(len(atoms)):
         if atoms[i].x_position >= mx-round(cursor_size/2)-1 and atoms[i].x_position <= mx+round(cursor_size/2) and atoms[i].y_position >= my-round(cursor_size/2)-1 and atoms[i].y_position <= my+round(cursor_size/2):
             atomdeletelist.append(atoms[i])
-    for i in atomdeletelist:
+    for i in atomdeletelist:                #deleted now
         atoms.remove(i)
 
 
 def Atom_Manager():
-    global atom_delete_list
+    global atom_delete_list                 # This is so the chemical module can delete the original molecules in a reaction without breaking loops during its use
     global atom_create_list
 
     for k in atom_delete_list:
@@ -418,7 +416,7 @@ def Atom_Manager():
     atom_delete_list = []
 
     for j in atom_create_list:
-        atoms.append(atom(j[0], j[1], j[2]))
+        atoms.append(atom(j[0], j[1], j[2]))    #creates new atom (from reactions) with one of its reactant's velocities
         atoms[-1].x_velocity = j[3]
         atoms[-1].x_velocity = j[4]
     atom_create_list = []
@@ -426,7 +424,7 @@ def Atom_Manager():
 
 def Rendering_Particles():
 
-    if pygame.mouse.get_pressed()[0] == 1:
+    if pygame.mouse.get_pressed()[0] == 1:          #adds particles if mouse is pressed, deletes if not pressed
         SimulatorMousePressedAdd(cursor_size)
         #pass
 
@@ -449,20 +447,20 @@ def Rendering_Particles():
 
 
 ### PHYSICS START ###
-def contains(list, filter_x, filter_y, atomnumber):
+def contains(list, filter_x, filter_y, atomnumber):                 #filters a list of atoms for physics
     for x in list:
         if filter_x(x) and filter_y(x) and x != list[atomnumber]:
             return True
     return False
 
 
-def Stacking(atom_A, atom_B):
+def Stacking(atom_A, atom_B):                   #checks if particles are stacking, then sends the atoms to chemical reaction module)
     atom_A.y_velocity = 0
     atom_A.y_position -= 1
-    Chemistry_Contact(atom_A, atom_B)
+    Chemistry_Contact(atom_A, atom_B)           #checks if the 2 atoms will react
 
 def sortx_position(self):
-    return self.x_position
+    return self.x_position                      #idk sorts x and y or something i guess
 
 def sorty_position(self):
     return self.y_position
@@ -482,9 +480,9 @@ def Physics():
         if atoms[i].temperature < -273:
             atoms[i].temperature = -273
 
-        if atoms[i].temperature < Temperature:
-            atoms[i].temperature += 1/10*(Temperature - atoms[i].temperature)
-        if atoms[i].temperature > Temperature:
+        if atoms[i].temperature < Temperature:                                      #done so the atoms will approach the workspace Average_Temperatu
+            atoms[i].temperature += 1/10*(Temperature - atoms[i].temperature)       #but below is that the temperature will also change based of atom temp averages
+        if atoms[i].temperature > Temperature:                                      #this is so continous reactuons can increase temperature
             atoms[i].temperature += 1/10*(Temperature - atoms[i].temperature)
 
         if atoms[i].temperature > Atom_Dict[atoms[i].type]["Melting_temp"]:   #is melting
@@ -496,12 +494,32 @@ def Physics():
         if atoms[i].temperature <= Atom_Dict[atoms[i].type]["Melting_temp"]:   #is freezing
             atoms[i].state = "solid"
 
+
+        if atoms[i].state == "gas":
+            atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-4, 4+1)         #gas will float without gravity, moved by random velocities
+            atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-2, 2+1)
+
+        if atoms[i].state == "liquid":
+            atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
+            atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-1, 1+1)     #liquids will fall, but sill have random velocities
+            atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-1, 1+1)
+
+        if atoms[i].state == "solid":
+            atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at, will only fall without randomness, actual physics
+
+        atoms[i].y_position = atoms[i].y_position + atoms[i].y_velocity             #some actual physics
+        atoms[i].x_position = atoms[i].x_position + atoms[i].x_velocity
+        atoms[i].y_position = round(atoms[i].y_position)                            #some fake physics
+        atoms[i].x_position = round(atoms[i].x_position)
+        atoms[i].x_velocity = 0     #prevent flying atoms or something, idk but is important
+
+
         #BORDERS 10, 10, 900, 500
-        if atoms[i].x_position > 898:
+        if atoms[i].x_position > 898:                   #stops the particle from falling off workspace
             atoms[i].x_position = 898
             atoms[i].x_velocity = 0
 
-        if atoms[i].x_position < 12:
+        if atoms[i].x_position < 12:                        #stops particles from going outside borders
             atoms[i].x_position = 12
             atoms[i].x_velocity = 0
 
@@ -513,29 +531,8 @@ def Physics():
             atoms[i].y_position = 12
             atoms[i].y_velocity = 0
 
-        if atoms[i].state == "gas":
-            atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-4, 4+1)
-            atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-2, 2+1)
-
-        if atoms[i].state == "liquid":
-            atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
-            atoms[i].x_velocity = atoms[i].x_velocity + (1/1)*random.randrange(-1, 1+1)
-            atoms[i].y_velocity = atoms[i].y_velocity + (1/8)*random.randrange(-1, 1+1)
-
-        if atoms[i].state == "solid":
-            atoms[i].y_velocity = atoms[i].y_velocity + (9.8 * 1/60)  # v = u + at
-
-        atoms[i].y_position = atoms[i].y_position + atoms[i].y_velocity
-        atoms[i].x_position = atoms[i].x_position + atoms[i].x_velocity
-        atoms[i].y_position = round(atoms[i].y_position)
-        atoms[i].x_position = round(atoms[i].x_position)
-        atoms[i].x_velocity = 0
-
-        Coordinate_Holder = atoms[i].x_position, atoms[i].y_position
-        coordinates.append(Coordinate_Holder)
-
     if len(atoms) != 0:
-        if Temperature < Average_Temperature/len(atoms):
+        if Temperature < Average_Temperature/len(atoms):                #other temperature part, does some magic to bring the average temps of atoms and screen temps together
             Temperature -= 1/10*(Temperature - Average_Temperature/len(atoms))
         if Temperature > Average_Temperature/len(atoms):
             Temperature -= 1/10*(Temperature - Average_Temperature/len(atoms))
@@ -547,10 +544,9 @@ def Physics():
     for i in range(len(atoms)):                     #Should check only when there is movement, and only on the particles that move
         if btoms[i].y_position == btoms[i-1].y_position and btoms[i].x_position == btoms[i-1].x_position and btoms[i] != btoms[i-1]:
             Stacking(btoms[i],btoms[i-1])
-            btoms = sorted(atoms, key=sortx_position)
-
-
-        if contains(atoms, lambda x: x.x_position == atoms[i].x_position, lambda x: x.y_position == atoms[i].y_position, i):
+            btoms = sorted(atoms, key=sortx_position)                                                                           #sorts the atoms by x coord, then checks if they are overlapping
+                                                                                                                                #uses some weird filter module, but it works
+        if contains(atoms, lambda x: x.x_position == atoms[i].x_position, lambda x: x.y_position == atoms[i].y_position, i):    #The first filters, then the second corrects the positions
             Stacking(atoms[i],atoms[i-1])
             btoms = sorted(atoms, key=sortx_position)
 
@@ -566,7 +562,7 @@ def Physics():
 ### CHEMISTRY START ###
 
 def Chemistry_Contact(atom_1, atom_2):
-    if atom_1.type in Reactant_1_list and atom_2.type in Reactant_2_list:
+    if atom_1.type in Reactant_1_list and atom_2.type in Reactant_2_list:               #checks if atoms will react with data from .txt reaction file
         if Reaction_Dict[atom_1.type]["Reactant_2"] == atom_2.type:
             Chemistry_Reaction(atom_1, atom_2)
     elif atom_2.type in Reactant_1_list and atom_1.type in Reactant_2_list:
@@ -574,13 +570,13 @@ def Chemistry_Contact(atom_1, atom_2):
             Chemistry_Reaction(atom_2, atom_1)
 
 
-def Chemistry_Reaction(atom_1, atom_2):
+def Chemistry_Reaction(atom_1, atom_2):                                                    #completes the actual reactions
     global Temperature
     global atom_delete_list
     global atom_create_list
-    if Temperature >= Reaction_Dict[atom_1.type]["Temp_Required"]:
-        Temperature += (1/10)*Reaction_Dict[atom_1.type]["Temp_Added"]
-        if "+" in Reaction_Dict[atom_1.type]["Resultant"]:
+    if Temperature >= Reaction_Dict[atom_1.type]["Temp_Required"]:                      #stores information in a dictionary of the Resultant defined by
+        Temperature += (1/10)*Reaction_Dict[atom_1.type]["Temp_Added"]                  #various dictionaries of reactants, temp and other info
+        if "+" in Reaction_Dict[atom_1.type]["Resultant"]:                              #its a layered dictionary that has all information
             f = Reaction_Dict[atom_1.type]["Resultant"].split("+")
             for o in f:
                 atom_create_list.append([atom_1.x_position, atom_1.y_position+1, o, atom_1.x_velocity, atom_1.y_velocity])
@@ -588,15 +584,17 @@ def Chemistry_Reaction(atom_1, atom_2):
             atom_create_list.append([atom_1.x_position, atom_1.y_position, Reaction_Dict[atom_1.type]["Resultant"], atom_1.x_velocity, atom_1.y_velocity])
 
 
-        atom_delete_list.append(atom_1)
+        atom_delete_list.append(atom_1)                             #deletes the old atoms
         atom_delete_list.append(atom_2)
 
 ### CHEMISTRY END ###
 
 
 
+
+
 def Screen_Controls():
-    CreateButton(910,480,950,500,'Temp_Up')
+    CreateButton(910,480,950,500,'Temp_Up')                     #all the screen controls found on the bottom right
     CreateButton(910,510,950,530,'Temp_Down')
     CreateButton(910,450,950,470,'Clear_Atoms')
     CreateButton(910,420,950,440,'Physics_status')
@@ -604,7 +602,7 @@ def Screen_Controls():
     global Temperature
     if pygame.key.get_pressed()[pygame.K_UP] == True:
         Temperature += 1
-    if pygame.key.get_pressed()[pygame.K_UP] == True and pygame.key.get_pressed()[pygame.K_LSHIFT] == True:
+    if pygame.key.get_pressed()[pygame.K_UP] == True and pygame.key.get_pressed()[pygame.K_LSHIFT] == True:     #boosts temp change
         Temperature += 100
     if pygame.key.get_pressed()[pygame.K_DOWN] == True:
         Temperature -= 1
@@ -632,17 +630,16 @@ Information_Menu_Holder = LoadInformation("chemicalinfomation.txt")
 
 
 Chemical_Information_Other = LoadInformation("chemicalinfomation.txt")
-Chemical_Information_Other.pop(0)
+Chemical_Information_Other.pop(0)           #deletes sample information
 
 
 
 Atom_Dict = {}
-coordinates = []
 
 for i in Chemical_Information_Other:
     j = i.split("|")
     j_dict = {}
-    j_dict["Melting_temp"] = float(j[5])
+    j_dict["Melting_temp"] = float(j[5])            #gathers all infomation from the list (from LoadInformation())
     j_dict["Boiling_temp"] = float(j[6])
     j_dict["Colour"] = int(j[8]),int(j[9]),int(j[10])
     if j[1] not in Atom_List:
@@ -659,7 +656,7 @@ for i in Chemical_Information_Other:
     Atom_Dict[j[1]] = j_dict
 
 
-Chemical_Information = LoadInformation("chemicalinfomation.txt")
+Chemical_Information = LoadInformation("chemicalinfomation.txt")  #redundancy i guess
 
 Atom_Dict = {}
 Chemical_Information_Other = LoadInformation("chemicalinfomation.txt")
@@ -676,20 +673,17 @@ for i in Chemical_Information_Other:
 
 
 Reaction_Dict = {}
-Reaction_Information = LoadInformation("chemicalreaction.txt")
+Reaction_Information = LoadInformation("chemicalreaction.txt")          #breaks down as before, into a dicitonary
 Reaction_Information.pop(0)
 for i in Reaction_Information:
     j = i.split("|")
     j_dict = {}
     j_dict["Reactant_1"] = j[0]
-    j_dict["Reactant_1_Quantity"] = int(j[1])
-    j_dict["Reactant_2"] = j[2]
-    j_dict["Reactant_2_Quantity"] = int(j[3])
-    j_dict["Resultant"] = j[4]
-    j_dict["Resultant_Quantity"] = int(j[5])
-    j_dict["Temp_Required"] = float(j[6])
-    j_dict["Temp_Added"] = float(j[7])
-    Reaction_Dict[j[0]] = j_dict
+    j_dict["Reactant_2"] = j[1]
+    j_dict["Resultant"] = j[2]
+    j_dict["Temp_Required"] = float(j[3])
+    j_dict["Temp_Added"] = float(j[4])
+    Reaction_Dict[j[0]] = j_dict            #creates the layered dictionary here
 
 Reactant_1_list = []
 Reactant_2_list = []
@@ -719,20 +713,20 @@ while running == True:
             #CreateButton(450,40,550,60,'yes?')
             if ButtonClick(MouseLocation()) not in ["WorkSpace", "InformationPanel", "InformationMenu", "Temp_Up", "Temp_Down", "Clear_Atoms", "Physics_status", "Info_status", "Nil"]:
                 #print(ButtonClick(MouseLocation()))
-                Selected_Molecule = ButtonClick(MouseLocation())
+                Selected_Molecule = ButtonClick(MouseLocation())            #pretty much only molecules
             if ButtonClick(MouseLocation()) == "Temp_Up":
                 Temperature += 1
             if ButtonClick(MouseLocation()) == "Temp_Down":
                 Temperature -= 1
             if ButtonClick(MouseLocation()) == "Physics_status":
                 if Physics_Running == True:
-                    Physics_Running = False
+                    Physics_Running = False                         #the classic if this then that part A
                 elif Physics_Running == False:
                     Physics_Running = True
             if ButtonClick(MouseLocation()) == "Info_status":
                 if InformationMenuToggleBool == True:
                     InformationMenuToggleBool = False
-                elif InformationMenuToggleBool == False:
+                elif InformationMenuToggleBool == False:            #the classic if this then that part 2
                     InformationMenuToggleBool = True
             if ButtonClick(MouseLocation()) == "Clear_Atoms":
                 for i in atoms:
@@ -747,18 +741,18 @@ while running == True:
             if key[pygame.K_SPACE]:
                 if Physics_Running == True:
                     Physics_Running = False
-                elif Physics_Running == False:
+                elif Physics_Running == False:      #the classic if this then that part III
                     Physics_Running = True
 
 
-    Rendering_BaseScreen()
+    Rendering_BaseScreen()              #all the modulised parts, was for threading but rip that
 
     Atom_Manager()
 
 
     Rendering_Particles()
 
-    if Physics_Running == True:
+    if Physics_Running == True:     #very simple way to pause physics, and chemistry by extention
         Physics()
 
 
@@ -768,7 +762,7 @@ while running == True:
 
 
     Screen_Controls()
-    ButtonLocationPrintHolder = "Nil"
+    ButtonLocationPrintHolder = "Nil"           #fps and additional small stuff
     pygame.display.update()
 
     clock.tick(60)

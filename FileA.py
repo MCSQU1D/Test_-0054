@@ -37,6 +37,51 @@ buttonsDict = {
 
 
 
+
+
+
+
+
+### VERY IMPORTANT SORT ALGORITHM THAT DOES ALOT START ###
+global UnsortedList
+global UnsortedListb
+UnsortedList = []
+for i in range(100):
+    UnsortedList.append(random.randrange(0, 100))
+UnsortedListb = UnsortedList
+
+def theNumbers():
+    global UnsortedList
+    Numitems = len(UnsortedList)
+    CurrentItem = 1
+    #UnsortedList.sort()
+    while CurrentItem <= Numitems - 1:
+        CurrentDataItem = UnsortedList[CurrentItem]
+        Comparison = 0
+        Finish = False
+        while Comparison < CurrentItem and Finish == False:
+            if CurrentDataItem < UnsortedList[Comparison]:
+                ShuffleItem = CurrentItem
+                while ShuffleItem > Comparison:
+                    UnsortedList[ShuffleItem] = UnsortedList[ShuffleItem-1]
+                    ShuffleItem = ShuffleItem - 1
+                UnsortedList[Comparison] = CurrentDataItem
+                Finish = True
+            Comparison += 1
+        CurrentItem += 1
+    return(UnsortedList)
+### VERY IMPORTANT SORT ALGORITHM THAT DOES ALOT END ###
+
+#print(theNumbers())
+
+
+
+
+
+
+
+
+
 def MouseLocation():
     return pygame.mouse.get_pos()  #gets mouse sise in simple and easy manner
 
@@ -112,9 +157,6 @@ def PrintLegal():          #prints legal information page (over the top of other
 
 def CreateButton(x1,y1,x2,y2,name):             #create the button by the name defined by the limits
     buttonsDict[(x1, x2, y1, y2)] = name
-    #pygame.draw.rect(screen, (255,255,255), (x1,y1,x2-x1,y2-y1))
-    #pygame.draw.rect(screen, (0,0,0), (x1+1,y1+1,x2-x1-2,y2-y1-2))
-    #PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255,255,255))
 
 
 funny_comment_list = LoadInformation("funny.txt")
@@ -131,16 +173,16 @@ while running == True:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             #print(ButtonClick(MouseLocation()))
-            if ButtonClick(MouseLocation()) == "Quit":
+            if ButtonClick(MouseLocation()) == "Quit" and Legal_Toggle == False:      #the 3 main buttons on title screen
                 running = False
-            if ButtonClick(MouseLocation()) == "Begin":
+            if ButtonClick(MouseLocation()) == "Begin" and Legal_Toggle == False:   #only allow clicking when legal screen isn't showing
                 running = False
-                import FileB
+                import FileB                                    #stops this program, and starts the main code
             if ButtonClick(MouseLocation()) == "Legal":
                 if Legal_Toggle == True:
                     Legal_Toggle = False
                     screen.fill((0,0,0))
-                elif Legal_Toggle == False:
+                elif Legal_Toggle == False:                     #only show legal when needed, fill back with black when showing
                     Legal_Toggle = True
 
 
@@ -159,12 +201,6 @@ while running == True:
     if Legal_Toggle == True:        # if legal is on then show legal
         PrintLegal()
 
-    #Printer_1 = 0
-    #for i in Ratios:
-        #Ratio_Printer = (str(int(1920*i)) + "x" + str(int(1080*i)))
-        #CreateButton((0),(7*display_height/27 + 2*display_height/27*Printer_1),(2*display_width/16),(9*display_height/27 + 2*display_height/27*Printer_1), Printer_1) #ADJUST BUTTTON AREAs
-        #PrintText((display_width/16), (8*display_height/27 + 2*display_height/27*Printer_1), Ratio_Printer, 'Apple II Pro.otf', int(28*size_ratio), (255,255,255))
-        #Printer_1 += 1
 
     #reset button print variable
     ButtonLocationPrintHolder = 'Nil'
