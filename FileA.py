@@ -17,13 +17,13 @@ Legal_Toggle = False
 
 
 ### SREEN, CLOCK AND DISPLAY ###
-screen = pygame.display.set_mode((display_width,display_height))
+screen = pygame.display.set_mode((display_width,display_height))    # sets time, creates display, logos and caption
 clock = pygame.time.Clock()
 pygame.display.set_caption("TEST: #0054")
 logo = pygame.image.load("logo.png")
 pygame.display.set_icon(logo)
 
-screen.fill((0,0,0))  # (R, G, B)
+screen.fill((0,0,0))  # (R, G, B), fills the screen, black
 #background_image = pygame.image.load('background_02.png')
 #screen.blit(background_image, (0, 0))
 
