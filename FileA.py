@@ -20,6 +20,8 @@ Legal_Toggle = False
 screen = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
 pygame.display.set_caption("TEST: #0054")
+logo = pygame.image.load("logo.png")
+pygame.display.set_icon(logo)
 
 screen.fill((0,0,0))  # (R, G, B)
 #background_image = pygame.image.load('background_02.png')
@@ -36,10 +38,10 @@ buttonsDict = {
 
 
 def MouseLocation():
-    return pygame.mouse.get_pos()
+    return pygame.mouse.get_pos()  #gets mouse sise in simple and easy manner
 
 
-def LoadInformation(file):
+def LoadInformation(file):     #gets .txt files, splits into list of each lines
     path = os.path.join("files")
     filelist = []
 
@@ -57,7 +59,7 @@ def LoadInformation(file):
     return file_split
 
 
-def PrintText(Xposition, Yposition, text, font, size, colour):
+def PrintText(Xposition, Yposition, text, font, size, colour):   #prints text on screen
     font = pygame.font.Font(font, size) #Font size
     LineHolder = text
     text = font.render(text, True, colour) #Font colour
@@ -71,7 +73,7 @@ def ButtonClick(Mouse_Position):
     ButtonLocationPrintHolder = "nil"
     x, y = Mouse_Position
     #print(buttonsDict)
-    for ButtonLocations in buttonsDict:
+    for ButtonLocations in buttonsDict:    #stores all buttons as a dictionary, where the button is defined by the its borders
         xlimithigh = ButtonLocations[0]
         xlimitlow = ButtonLocations[1]
         ylimithigh = ButtonLocations[2]
@@ -83,7 +85,7 @@ def ButtonClick(Mouse_Position):
             #print(ButtonLocationPrintHolder)
     return ButtonLocationPrintHolder
 
-def Paragrapher(string,length,fontsize,xposition,yposition):
+def Paragrapher(string,length,fontsize,xposition,yposition):            # takes a string a splits it into a paragraph (i.e. inserts enters after a certain length)
     TextSplit = string.split(' ')
     TextHolder = ""
     TextFinal = []
@@ -101,14 +103,14 @@ def Paragrapher(string,length,fontsize,xposition,yposition):
         PrintText(30+len(text)*4.5,yposition, text,'Apple II Pro.otf',fontsize,(255, 255, 255))
         yposition += 12
 
-def PrintLegal():
+def PrintLegal():          #prints legal information page (over the top of other page)
     pygame.draw.rect(screen, (0,0,0), (0,0,1*display_width,25*display_height/27))
     PrintText((display_width/2), (4*display_height/27), "Legal Information and Disclaimer", 'Apple II ALT Pro.otf', int(60*size_ratio), (255,255,255))
     Paragrapher(LoadInformation("legal.txt")[0],450,10,50,6*display_height/27)
 
 
 
-def CreateButton(x1,y1,x2,y2,name):
+def CreateButton(x1,y1,x2,y2,name):             #create the button by the name defined by the limits
     buttonsDict[(x1, x2, y1, y2)] = name
     #pygame.draw.rect(screen, (255,255,255), (x1,y1,x2-x1,y2-y1))
     #pygame.draw.rect(screen, (0,0,0), (x1+1,y1+1,x2-x1-2,y2-y1-2))
@@ -116,7 +118,7 @@ def CreateButton(x1,y1,x2,y2,name):
 
 
 funny_comment_list = LoadInformation("funny.txt")
-funny_comment = funny_comment_list[random.randint(0, len(funny_comment_list)-1)]
+funny_comment = funny_comment_list[random.randint(0, len(funny_comment_list)-1)]        #randomly picks a funny comment from the .txt file
 
 # main loop
 running = True
@@ -143,9 +145,9 @@ while running == True:
 
 
 
-    PrintText((display_width/2), (8*display_height/30), funny_comment, 'Apple II Pro.otf', int(24*size_ratio), (255,0,0))
-    PrintText((display_width/2), (5*display_height/27), "TEST:#0054", 'Apple II ALT Pro.otf', int(140*size_ratio), (255,255,255))
-    PrintText((display_width/2), (15*display_height/27), "BEGIN", 'Apple II ALT Pro.otf', int(110*size_ratio), (255,255,255))
+    PrintText((display_width/2), (8*display_height/30), funny_comment, 'Apple II Pro.otf', int(24*size_ratio), (255,0,0))           # prints all the text on page
+    PrintText((display_width/2), (5*display_height/27), "TEST:#0054", 'Apple II ALT Pro.otf', int(140*size_ratio), (255,255,255))   #the display_width and display_height are removed functionality
+    PrintText((display_width/2), (15*display_height/27), "BEGIN", 'Apple II ALT Pro.otf', int(110*size_ratio), (255,255,255))       # ran out of time to integrate them into fileB
     PrintText((display_width/2), (20*display_height/27), "QUIT", 'Apple II ALT Pro.otf', int(110*size_ratio), (255,255,255))
     PrintText((5*display_width/6), (26*display_height/27), "Developed by Samuel McKid", 'Apple II Pro.otf', int(24*size_ratio), (255,0,0))
     PrintText((1*display_width/16), (26*display_height/27), "Legal", 'Apple II Pro.otf', int(24*size_ratio), (255,0,0))
@@ -154,7 +156,7 @@ while running == True:
     CreateButton(3*display_width/8,2*display_height/3,5*display_width/8,22*display_height/27,'Quit')
     CreateButton(0*display_width,25*display_height/27,1*display_width/8,1*display_height,'Legal')
 
-    if Legal_Toggle == True:
+    if Legal_Toggle == True:        # if legal is on then show legal
         PrintLegal()
 
     #Printer_1 = 0
@@ -171,11 +173,10 @@ while running == True:
     # clock.tick(framespersecond)
     #buttonsDict.clear()
     #resets screen size if there is a change
-    display_width = int(1920*size_ratio)
+    display_width = int(1920*size_ratio)            #removed functionality
     display_height = int(1080*size_ratio)
     screen = pygame.display.set_mode((display_width,display_height))
     clock.tick(60)
-
 
 
 pygame.quit()

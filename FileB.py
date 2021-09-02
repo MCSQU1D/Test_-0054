@@ -14,6 +14,11 @@ screen = pygame.display.set_mode((display_width,display_height))
 clock = pygame.time.Clock()
 screen.fill((0,0,0))  # (R, G, B)
 
+# load and set the logo and name
+logo = pygame.image.load("logo.png")
+pygame.display.set_icon(logo)
+pygame.display.set_caption("TEST: #0054")
+
 
 ### VARIABLE DECLARATION ###
 
@@ -59,7 +64,7 @@ ButtonInformationDict = {
     "Clear_Atoms" : "Clear all atoms, can use 'c' key",
     "Physics_status" : "Plays/Pauses the particles movement, can use spacebar",
     "Info_status" : "Shows/hides Information menu, can use 'i' key",
-    "H" : "Hydrogen (H): A simple element",
+    "H" : "Hydrogen (H): A simple element",         #these are the molecules included in the program, so custom defintions have be written
     "He" : "Helium (He): A simple element",
     "C" : "Carbon (C): A nonmetal",
     "N" : "Nitrogen (N): A simple element",
@@ -71,7 +76,7 @@ ButtonInformationDict = {
     "H2O" : "Water (H2O): A simple compound",
     "FeO" : "Iron Oxide (FeO): A simple compound",
     "AlO" : "Alumina (Al2O3): A simple compound",
-    "Mef" : "Not Mef (C10H15N): Hehe Durgs"
+    "Mef" : "Not Mef (C10H15N): Hehe Durgs"             #Cheeky Joke
 }
 
 
@@ -80,13 +85,13 @@ ButtonInformationDict = {
 ### FUNCTIONS ###
 
 def MouseLocation():
-    return pygame.mouse.get_pos()
+    return pygame.mouse.get_pos()       #pretty self explanatory, just cleans it up
 
-def LoadInformation(file):
+def LoadInformation(file):              #For loading information from .txt files in the "files" directory
     path = os.path.join("files")
     filelist = []
 
-    for r, d, f in os.walk(path):
+    for r, d, f in os.walk(path):       #For all files in the files directory, on get ones with .txt
         for file_finder in f:
             if '.txt' in file_finder:
                 filelist.append(file_finder)
@@ -96,7 +101,7 @@ def LoadInformation(file):
     file_pathname = os.getcwd()+"/files/" +file  #finds the files folder
     file_opened = open(file_pathname,"r")
     file_split = file_opened.read().split("\n")
-    return file_split
+    return file_split                               #Reads the file as a list of each line
 
 
 
@@ -113,7 +118,7 @@ def CreateCursor(x,y,size):
 
 
 
-def PrintText(Xposition, Yposition, text, font, size, colour):
+def PrintText(Xposition, Yposition, text, font, size, colour): #prints text on the screen
     global Selected_Molecule
     font = pygame.font.Font(font, size) #Font size
     LineHolder = text
@@ -124,9 +129,8 @@ def PrintText(Xposition, Yposition, text, font, size, colour):
     screen.blit(text, textRect)
 
 
-def ButtonClick(Mouse_Position):
+def ButtonClick(Mouse_Position):                #takes the mouse postition, and returns the name of the button clicked on
     x, y = Mouse_Position
-    #print(buttonsDict)
     ButtonLocationPrintHolder = "Nil"
     for ButtonLocations in buttonsDict:
         xlimithigh = ButtonLocations[0]
@@ -134,9 +138,9 @@ def ButtonClick(Mouse_Position):
         ylimithigh = ButtonLocations[2]
         ylimitlow = ButtonLocations[3]
 
-        if x > xlimithigh and x < xlimitlow and y > ylimithigh and y < ylimitlow:
+        if x > xlimithigh and x < xlimitlow and y > ylimithigh and y < ylimitlow:       #uses the dictionary of all button borders to find the button
             ButtonLocationPrintHolder = buttonsDict[ButtonLocations]
-    return ButtonLocationPrintHolder
+    return ButtonLocationPrintHolder        # returns button name
 
 
 def LoadImage(file):
