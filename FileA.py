@@ -1,9 +1,6 @@
 import pygame
-from time import sleep
 import random
 import os
-import math
-from multiprocessing import Process
 
 
 pygame.init()

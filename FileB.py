@@ -1,10 +1,7 @@
 import pygame
-from time import sleep
 from time import perf_counter
 import random
 import os
-import math
-from multiprocessing import Process
 
 
 pygame.init()
@@ -48,9 +45,9 @@ atom_delete_list = []
 global atom_create_list
 atom_create_list = []
 
-Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO", "AlO"]
-Element_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au"]
-Compound_List = ["H2O", "FeO", "AlO"]
+Atom_List = []
+Element_List = []
+Compound_List = []
 
 
 ButtonInformationDict = {
@@ -73,7 +70,8 @@ ButtonInformationDict = {
     "Au" : "Gold (Au): A metal",
     "H2O" : "Water (H2O): A simple compound",
     "FeO" : "Iron Oxide (FeO): A simple compound",
-    "AlO" : "Alumina (Al2O3): A simple compound"
+    "AlO" : "Alumina (Al2O3): A simple compound",
+    "Mef" : "Not Mef (C10H15N): Hehe Durgs"
 }
 
 
@@ -205,7 +203,8 @@ def InformationMenuToggle():
     global InformationMenuToggleBool
     if InformationMenuToggleBool == True:
         InformationMenuToggleBool = False
-        del buttonsDict[(20,220,40,490)]
+        if (20,220,40,490) in buttonsDict:
+            del buttonsDict[(20,220,40,490)]
     elif InformationMenuToggleBool == False:
         InformationMenuToggleBool = True
 
@@ -318,8 +317,15 @@ def Rendering_BaseScreen():
     PrintText(70, 25, "FPS: " + str(FPS), 'Apple II Pro.otf',12,(255, 255, 255))
     PrintText(240, 25, "Particles: " + str(len(atoms)), 'Apple II Pro.otf',12,(255, 255, 255))
     PrintText(455, 25, "Temp: " + str(int(Temperature)) + "°C (" + str(int(Temperature*9/5+32)) + "°F)", 'Apple II Pro.otf',12,(255, 255, 255))
-    if ButtonHover(MouseLocation()) != "Nil":
+    if ButtonHover(MouseLocation()) in ButtonInformationDict:
         name = ButtonInformationDict[ButtonHover(MouseLocation())]
+        x1 = 10
+        x2 = 900
+        y1 = 510
+        y2 = 530
+        PrintText((x1+x2)/2,(y1+y2)/2,name,'Apple II Pro.otf',12,(255, 255, 255))
+    elif ButtonHover(MouseLocation()) != "nil":
+        name = "This appears to be a custom molecule"
         x1 = 10
         x2 = 900
         y1 = 510
@@ -396,7 +402,6 @@ def SimulatorMousePressedRemove(size):
             atomdeletelist.append(atoms[i])
     for i in atomdeletelist:
         atoms.remove(i)
-        del i
 
 
 def Atom_Manager():
@@ -406,7 +411,6 @@ def Atom_Manager():
     for k in atom_delete_list:
         if k in atoms:
             atoms.remove(k)
-            del k
     atom_delete_list = []
 
     for j in atom_create_list:
@@ -625,17 +629,32 @@ Information_Menu_Holder = LoadInformation("chemicalinfomation.txt")
 
 Chemical_Information_Other = LoadInformation("chemicalinfomation.txt")
 Chemical_Information_Other.pop(0)
+
+
+
 Atom_Dict = {}
+coordinates = []
+
 for i in Chemical_Information_Other:
     j = i.split("|")
     j_dict = {}
     j_dict["Melting_temp"] = float(j[5])
     j_dict["Boiling_temp"] = float(j[6])
     j_dict["Colour"] = int(j[8]),int(j[9]),int(j[10])
+    if j[1] not in Atom_List:
+        Atom_List.append(j[1])
+        g = 0
+        for i in j[1]:
+            if i.isupper() == True:
+                g += 1
+        if g == 1:
+            Element_List.append(j[1])
+        if g > 1:
+            Compound_List.append(j[1])
 
     Atom_Dict[j[1]] = j_dict
 
-Atom_List = ["H", "He", "C", "N", "O", "Na", "Al", "Fe", "Au", "H2O", "FeO", "AlO"]
+
 Chemical_Information = LoadInformation("chemicalinfomation.txt")
 
 Atom_Dict = {}
@@ -648,6 +667,9 @@ for i in Chemical_Information_Other:
     j_dict["Boiling_temp"] = float(j[6])
     j_dict["Colour"] = int(j[8]),int(j[9]),int(j[10])
     Atom_Dict[j[1]] = j_dict
+
+
+
 
 Reaction_Dict = {}
 Reaction_Information = LoadInformation("chemicalreaction.txt")
@@ -671,8 +693,6 @@ for i in Reaction_Dict:
     Reactant_1_list.append(i)
     Reactant_2_list.append(Reaction_Dict[i]["Reactant_2"])
 
-
-coordinates = []
 
 
 
